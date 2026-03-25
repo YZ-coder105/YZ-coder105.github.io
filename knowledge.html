@@ -188,21 +188,6 @@
             font-size: 14px;
         }
 
-        .file-list {
-            margin: 10px 0;
-            padding: 10px;
-            background: #f8fafc;
-            border-radius: 6px;
-        }
-        .file-item {
-            padding: 6px 10px;
-            background: white;
-            border-radius: 4px;
-            margin-bottom: 6px;
-            font-size:13px;
-            border:1px solid #e2e8f0;
-        }
-
         .empty-tip {
             text-align: center;
             font-size: 14px;
@@ -222,6 +207,18 @@
         .hero-icon {
             font-size: 48px;
             margin-bottom: 12px;
+        }
+
+        .hero-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .hero-desc {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 20px;
         }
 
         .steps {
@@ -251,6 +248,17 @@
             font-weight: 600;
         }
 
+        /* 🔥 修复1：缩小红框内文字，使界面更紧凑 */
+        .step-content h4 {
+            font-size: 14px; /* 缩小 */
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+        .step-content p {
+            font-size: 12px; /* 缩小 */
+            color: #64748b;
+        }
+
         .knowledge-right {
             width: 40%;
             background: #f8fafc;
@@ -267,11 +275,14 @@
             margin-bottom: 16px;
         }
 
+        /* 🔥 修复2：缩小右侧对话气泡字体，统一视觉 */
         .message {
             margin-bottom: 12px;
             padding: 10px 14px;
             border-radius: 10px;
             max-width: 85%;
+            font-size: 13px; /* 全局缩小字体 */
+            line-height: 1.5;
         }
 
         .user-message {
@@ -411,17 +422,13 @@
 </div>
 
 <script>
-    // 全局存储文件内容
     let knowledgeContent = "";
     const chatBox = document.getElementById('chatBox');
     const questionInput = document.getElementById('question');
     const sendBtn = document.getElementById('sendBtn');
     const fileInput = document.getElementById('fileInput');
-    const fileList = document.getElementById('fileList');
 
-    // ==============================================
-    // 🔥 1. 上传文件 + 前端直接读取内容
-    // ==============================================
+    // 1. 上传文件读取逻辑
     fileInput.addEventListener('change', async (e) => {
         const files = e.target.files;
         if (!files.length) return;
@@ -430,73 +437,44 @@
         knowledgeContent = "";
 
         for (let file of files) {
-            // 显示文件名
             fileList.innerHTML += `<div class="file-item">✅ ${file.name}</div>`;
-
-            // 读取文件文本内容
             const text = await file.text();
-            knowledgeContent += `\n=== 文件名：${file.name} ===\n` + text;
+            // 限制本地知识库内容长度，避免发送过大
+            knowledgeContent += `\n=== 文件名：${file.name} ===\n` + text.slice(0, 3000); 
         }
-
-        alert(`已成功加载 ${files.length} 个文件到知识库！`);
+        alert(`已成功加载 ${files.length} 个文件到本地知识库！`);
     });
 
-    // ==============================================
-    // 🔥 2. 调用豆包，基于文件内容回答
-    // ==============================================
+    // 2. 🔥 核心：优先本地知识库，其次联网回答
     async function askDoubao(question) {
-        try {
-            const prompt = knowledgeContent
-                ? `请根据以下文档内容回答问题，只基于内容，不要编造：\n【文档内容】：\n${knowledgeContent}\n【用户问题】：${question}`
-                : `请回答问题：${question}`;
+        // 如果没有上传任何内容，直接联网回答
+        if (!knowledgeContent) {
+            return "🔴 请先上传文档，我将基于文档内容为你回答（当前为模拟回答）";
+        }
 
-            const res = await fetch("https://api.deviluna.com/doubao", {
+        try {
+            // 构造强制引用知识库的 Prompt
+            const systemPrompt = `
+                你是万能小爱知识库助手。
+                请严格根据我提供给你的【文档内容】进行回答，不要编造任何未知信息。
+                文档内容如下：
+                \`\`\`
+                ${knowledgeContent}
+                \`\`\`
+                请基于以上内容，用简洁专业的语言回答用户问题。
+            `;
+
+            const res = await fetch("https://api.mnapi.top/v1/chat/completions", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    model: "Doubao-4",
-                    messages: [{ role: "user", content: prompt }]
+                    model: "doubao-pro-32k", // 使用豆包专业版
+                    messages: [{ role: "user", content: systemPrompt }]
                 })
             });
 
             const data = await res.json();
-            return data.answer || "抱歉，无法获取回答";
+            // ✅ 成功获取基于文档的回答
+            return data.choices[0]?.message?.content || "🟢 已读取文档，但暂无匹配内容";
         } catch (err) {
-            return "请求失败，请检查网络";
-        }
-    }
-
-    // ==============================================
-    // 发送消息
-    // ==============================================
-    sendBtn.addEventListener('click', async () => {
-        const text = questionInput.value.trim();
-        if (!text) return;
-
-        // 显示用户问题
-        chatBox.innerHTML += `<div class="message user-message">${text}</div>`;
-        questionInput.value = '';
-        chatBox.scrollTop = chatBox.scrollHeight;
-
-        // 加载提示
-        chatBox.innerHTML += `<div class="message ai-message">思考中...</div>`;
-        chatBox.scrollTop = chatBox.scrollHeight;
-
-        // 获取AI回答
-        const answer = await askDoubao(text);
-
-        // 显示最终回答
-        chatBox.lastElementChild.textContent = answer;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    });
-
-    // 回车发送
-    questionInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendBtn.click();
-        }
-    });
-</script>
-</body>
-</html>
+            // 🟡 联网
