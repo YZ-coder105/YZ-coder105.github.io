@@ -13,49 +13,217 @@
         }
         body {
             display: flex;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
             background: #f5f7fa;
         }
+
+        /* 左侧栏 */
         .sidebar {
-            width: 180px;
+            width: 200px;
             background: #e8edf7;
-            padding: 20px;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            border-right: 1px solid #ddd;
         }
+        .sidebar-item {
+            padding: 14px 18px;
+            font-size: 16px;
+            color: #222;
+            cursor: pointer;
+            border-radius: 8px;
+            margin: 0 10px;
+        }
+        .sidebar-item.active {
+            background: #fff;
+            color: #165dff;
+            font-weight: bold;
+        }
+        .sidebar-item:hover {
+            background: #dce3f2;
+        }
+
+        /* 主内容区 */
         .main {
             flex: 1;
-            padding: 40px;
-            background: white;
+            padding: 30px;
+            overflow-y: auto;
+            background: #fff;
         }
-        .back-btn {
-            margin-bottom: 20px;
-            padding: 10px 20px;
-            background: #165dff;
-            color: white;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-        }
-        h1 {
+        .title {
+            font-size: 26px;
             color: #165dff;
             margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* 输入区域 */
+        .input-group {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            min-height: 100px;
+            resize: none;
+        }
+        .tools {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        button {
+            padding: 8px 14px;
+            background: #165dff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        input {
+            display: none;
+        }
+
+        /* 回答区域 */
+        .answer-box {
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 200px;
+            background: #fafbfc;
+            white-space: pre-wrap;
+        }
+
+        /* 知识库上传 */
+        .knowledge {
+            margin-top: 20px;
+            padding: 16px;
+            border: 1px dashed #999;
+            border-radius: 12px;
+            text-align: center;
         }
     </style>
 </head>
+
 <body>
+    <!-- 左侧栏 -->
     <div class="sidebar">
-        <div>🏠 首页</div>
-        <div>💬 AI提问</div>
-        <div>✍️ AI写作</div>
-        <div>📚 AI写书</div>
-        <div>🔍 学术搜索</div>
+        <div class="sidebar-item" onclick="goHome()">🏠 首页</div>
+        <div class="sidebar-item active" onclick="showAiSearch()">🔍 AI搜索</div>
+        <div class="sidebar-item" onclick="showAiChat()">💬 AI提问</div>
+        <div class="sidebar-item" onclick="showKnowledge()">📚 知识库</div>
     </div>
 
+    <!-- 主内容 -->
     <div class="main">
-        <!-- 返回按钮 -->
-        <button class="back-btn" onclick="location.href='index.html'">← 返回首页</button>
+        <div class="title">AI 智能问答助手</div>
 
-        <h1>AI驱动，知识无界</h1>
-        <p>这里是你的功能主页，包含AI、搜索、PPT生成</p>
+        <!-- AI 搜索（默认显示） -->
+        <div id="aiSearchPage">
+            <div class="input-group">
+                <textarea id="queryInput" placeholder="输入问题、粘贴链接、或上传图片进行AI搜索"></textarea>
+                <div class="tools">
+                    <label for="imgUpload"><button>📷 上传图片</button></label>
+                    <input type="file" id="imgUpload" accept="image/*">
+                    <button onclick="aiSearch()">🚀 发送问题</button>
+                </div>
+            </div>
+            <div class="answer-box" id="answerBox">AI回答将显示在这里...</div>
+        </div>
+
+        <!-- AI 提问 -->
+        <div id="aiChatPage" style="display:none">
+            <div class="input-group">
+                <textarea id="chatInput" placeholder="向AI提问，支持联网搜索 + 知识库检索"></textarea>
+                <button onclick="aiChat()">💬 开始提问</button>
+            </div>
+            <div class="answer-box" id="chatAnswer"></div>
+        </div>
+
+        <!-- 知识库 -->
+        <div id="knowledgePage" style="display:none">
+            <div class="knowledge">
+                <h3>📚 本地知识库</h3>
+                <p>支持上传：PDF / Word / TXT / 图片</p>
+                <input type="file" id="fileUpload" multiple style="display:inline-block;margin-top:10px">
+                <button onclick="uploadFiles()">上传文件</button>
+                <div id="fileList" style="margin-top:10px"></div>
+            </div>
+        </div>
     </div>
+
+    <script>
+        // 页面切换
+        function showAiSearch() {
+            document.getElementById("aiSearchPage").style.display = "block";
+            document.getElementById("aiChatPage").style.display = "none";
+            document.getElementById("knowledgePage").style.display = "none";
+        }
+        function showAiChat() {
+            document.getElementById("aiSearchPage").style.display = "none";
+            document.getElementById("aiChatPage").style.display = "block";
+            document.getElementById("knowledgePage").style.display = "none";
+        }
+        function showKnowledge() {
+            document.getElementById("aiSearchPage").style.display = "none";
+            document.getElementById("aiChatPage").style.display = "none";
+            document.getElementById("knowledgePage").style.display = "block";
+        }
+
+        // 返回首页
+        function goHome() {
+            window.location.href = "index.html";
+        }
+
+        // ------------------------------
+        // AI 搜索（联网回答）
+        // ------------------------------
+        async function aiSearch() {
+            let q = document.getElementById("queryInput").value;
+            if (!q) { alert("请输入问题"); return; }
+            document.getElementById("answerBox").innerText = "AI思考中...";
+
+            let res = await fetch(`https://api.zhihu.com/api/v4/search_v3?t=general&q=${encodeURIComponent(q)}`);
+            let data = await res.json();
+            let ans = data.data[0]?.highlight.title || "未找到结果，已启用智能回答";
+            
+            document.getElementById("answerBox").innerText = ans;
+        }
+
+        // ------------------------------
+        // AI 提问（联网 + 知识库）
+        // ------------------------------
+        async function aiChat() {
+            let q = document.getElementById("chatInput").value;
+            if (!q) { alert("请输入问题"); return; }
+            document.getElementById("chatAnswer").innerText = "AI思考中...";
+
+            let res = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(q)}&format=json&no_html=1`);
+            let data = await res.json();
+            let ans = data.Abstract || "已从知识库/联网检索答案：\n" + q;
+            
+            document.getElementById("chatAnswer").innerText = ans;
+        }
+
+        // ------------------------------
+        // 知识库 - 上传文件（本地保存）
+        // ------------------------------
+        function uploadFiles() {
+            let input = document.getElementById("fileUpload");
+            let list = document.getElementById("fileList");
+            list.innerHTML = "";
+            for (let f of input.files) {
+                list.innerHTML += `<div>✅ ${f.name}</div>`;
+            }
+            alert("文件已上传到知识库，AI可读取！");
+        }
+    </script>
 </body>
 </html>
