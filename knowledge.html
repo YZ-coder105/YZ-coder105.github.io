@@ -19,7 +19,6 @@
             background: #f8f9fc;
         }
 
-        /* —— 左侧栏 —— 与首页完全一致 */
         .sidebar {
             width: 160px;
             background: #eef2ff;
@@ -121,14 +120,12 @@
             white-space: nowrap;
         }
 
-        /* —— 右侧主内容 —— */
         .main {
             flex: 1;
             display: flex;
             overflow: hidden;
         }
 
-        /* 知识库左侧区域 */
         .knowledge-left {
             width: 60%;
             padding: 20px;
@@ -191,8 +188,19 @@
             font-size: 14px;
         }
 
-        .search-bar .btn {
-            padding: 10px 20px;
+        .file-list {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 6px;
+        }
+        .file-item {
+            padding: 6px 10px;
+            background: white;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            font-size:13px;
+            border:1px solid #e2e8f0;
         }
 
         .empty-tip {
@@ -214,18 +222,6 @@
         .hero-icon {
             font-size: 48px;
             margin-bottom: 12px;
-        }
-
-        .hero-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .hero-desc {
-            font-size: 13px;
-            opacity: 0.9;
-            margin-bottom: 20px;
         }
 
         .steps {
@@ -255,26 +251,40 @@
             font-weight: 600;
         }
 
-        .step-content h4 {
-            font-size: 15px;
-            color: #1e293b;
-            margin-bottom: 4px;
-        }
-
-        .step-content p {
-            font-size: 13px;
-            color: #64748b;
-        }
-
-        /* 知识库右侧提问区域 */
         .knowledge-right {
             width: 40%;
             background: #f8fafc;
             border-left: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
             padding: 20px;
+        }
+
+        .chat-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            margin-bottom: 16px;
+        }
+
+        .message {
+            margin-bottom: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            max-width: 85%;
+        }
+
+        .user-message {
+            background: #dbeafe;
+            color: #1e40af;
+            margin-left: auto;
+        }
+
+        .ai-message {
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            margin-right: auto;
         }
 
         .question-input {
@@ -301,12 +311,6 @@
             gap: 16px;
         }
 
-        .tool-icon {
-            font-size: 20px;
-            color: #64748b;
-            cursor: pointer;
-        }
-
         .send-btn {
             background: #1e40af;
             color: white;
@@ -325,110 +329,174 @@
     </style>
 </head>
 <body>
-    <!-- 左侧栏（与首页完全一致） -->
-    <div class="sidebar">
-        <div class="sidebar-header" onclick="location.href='index.html'">
-            <div class="sidebar-logo">🤖</div>
-            万能小爱
-        </div>
-        
-        <div class="sidebar-menu">
-            <div class="menu-item" onclick="location.href='index.html'">🏠 首页</div>
-            <div class="menu-item">💬 AI提问</div>
-            <div class="menu-item">✍️ AI写作</div>
-            <div class="menu-item">📖 AI写书</div>
-            <div class="menu-item active">📚 知识库</div>
-            <div class="menu-item">🔍 学术搜索</div>
+<div class="sidebar">
+    <div class="sidebar-header" onclick="location.href='index.html'">
+        <div class="sidebar-logo">🤖</div>
+        万能小爱
+    </div>
+    <div class="sidebar-menu">
+        <div class="menu-item" onclick="location.href='index.html'">🏠 首页</div>
+        <div class="menu-item">💬 AI提问</div>
+        <div class="menu-item">✍️ AI写作</div>
+        <div class="menu-item">📖 AI写书</div>
+        <div class="menu-item active">📚 知识库</div>
+        <div class="menu-item">🔍 学术搜索</div>
+    </div>
+    <div class="sidebar-footer">
+        <button class="footer-btn">⬇️ 下载APP</button>
+        <button class="footer-btn">✓ 使用攻略</button>
+        <button class="footer-btn login-btn">登录</button>
+    </div>
+</div>
+
+<div class="main">
+    <div class="knowledge-left">
+        <div class="knowledge-header">
+            <div class="knowledge-title"><span>🧠</span> 知识库</div>
+            <div class="header-actions">
+                <button class="btn btn-outline" onclick="document.getElementById('fileInput').click()">📁 新建文件夹</button>
+                <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">➕ 添加文件</button>
+                <input type="file" id="fileInput" style="display:none" multiple>
+            </div>
         </div>
 
-        <div class="sidebar-footer">
-            <button class="footer-btn">⬇️ 下载APP</button>
-            <button class="footer-btn">✓ 使用攻略</button>
-            <button class="footer-btn login-btn">登录</button>
+        <div class="search-bar">
+            <input type="text" placeholder="搜索文件名、文件夹名称">
+            <button class="btn btn-primary">搜索</button>
+        </div>
+
+        <div id="fileList" class="file-list" style="display:none;">
+            <h4 style="margin-bottom:8px;font-size:14px;color:#1e40af;">已上传文件</h4>
+        </div>
+
+        <div class="empty-tip">当前目录下暂无文件，上传一个文件，开始使用您的知识库吧</div>
+
+        <div class="hero-card">
+            <div class="hero-icon">🧠</div>
+            <div class="hero-title">搭建你的AI数字外脑</div>
+            <div class="hero-desc">文档越多，提问创作越准确</div>
+            <button class="btn btn-outline" style="background:white;color:#1e40af;" onclick="document.getElementById('fileInput').click()">➕ 添加文件</button>
+        </div>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content"><h4>上传文档</h4><p>支持 TXT、PDF、DOCX 等文档</p></div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content"><h4>向文档提问</h4><p>AI 自动读取内容并回答</p></div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content"><h4>基于文档写作</h4><p>精准引用文档内容</p></div>
+            </div>
         </div>
     </div>
 
-    <!-- 右侧知识库内容 -->
-    <div class="main">
-        <div class="knowledge-left">
-            <div class="knowledge-header">
-                <div class="knowledge-title">
-                    <span>🧠</span> 知识库
-                </div>
-                <div class="header-actions">
-                    <span style="font-size:13px;color:#6b7280;">0B/0B</span>
-                    <button class="btn btn-outline" onclick="document.getElementById('fileInput').click()">📁 新建文件夹</button>
-                    <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">➕ 添加文件</button>
-                    <input type="file" id="fileInput" style="display:none" multiple>
-                </div>
-            </div>
+    <div class="knowledge-right">
+        <div class="chat-box" id="chatBox">
+            <div class="message ai-message">你好！请上传文件，我将基于文档内容为你回答 😊</div>
+        </div>
 
-            <div class="search-bar">
-                <input type="text" placeholder="搜索文件名、文件夹名称">
-                <button class="btn btn-primary">搜索</button>
-            </div>
-
-            <div class="empty-tip">当前目录下暂无文件，上传一个文件，开始使用您的知识库吧</div>
-
-            <div class="hero-card">
-                <div class="hero-icon">🧠</div>
-                <div class="hero-title">搭建你的AI数字外脑</div>
-                <div class="hero-desc">文档越多，提问创作越准确</div>
-                <button class="btn btn-outline" style="background:white;color:#1e40af;" onclick="document.getElementById('fileInput').click()">➕ 添加文件</button>
-            </div>
-
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <h4>上传文档</h4>
-                        <p>深度文档学习，阅读整理翻译更轻松</p>
-                    </div>
-                </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <h4>向文档提问</h4>
-                        <p>知识库信息检索，回答更可靠</p>
-                    </div>
-                </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <h4>基于文档写作</h4>
-                        <p>知识库相关内容素材，写作时自动引用</p>
-                    </div>
-                </div>
+        <div class="question-input">
+            <textarea id="question" placeholder="对知识库进行提问（基于豆包大模型）"></textarea>
+            <div class="question-tools">
+                <button class="send-btn" id="sendBtn">➤ 发送</button>
             </div>
         </div>
 
-        <div class="knowledge-right">
-            <div class="question-input">
-                <textarea placeholder="对知识库进行提问"></textarea>
-                <div class="question-tools">
-                    <span class="tool-icon">🎤</span>
-                    <button class="send-btn">➤</button>
-                </div>
-            </div>
-            <div class="disclaimer">回复的内容由AI生成，非人工编辑；其内容准确性和完整性无法保证，不代表我们的态度和观点。</div>
-        </div>
+        <div class="disclaimer">回复由豆包大模型生成，内容仅供参考</div>
     </div>
+</div>
 
-    <script>
-        // 文件上传提示
-        const fileInput = document.getElementById('fileInput');
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                alert(`已选择 ${e.target.files.length} 个文件，准备上传！`);
-            }
-        });
+<script>
+    // 全局存储文件内容
+    let knowledgeContent = "";
+    const chatBox = document.getElementById('chatBox');
+    const questionInput = document.getElementById('question');
+    const sendBtn = document.getElementById('sendBtn');
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
 
-        // 提问发送逻辑
-        document.querySelector('.send-btn').addEventListener('click', () => {
-            const text = document.querySelector('.question-input textarea').value.trim();
-            if (!text) return;
-            alert(`提问：${text}\n（这里将调用大模型对知识库进行检索回答）`);
-        });
-    </script>
+    // ==============================================
+    // 🔥 1. 上传文件 + 前端直接读取内容
+    // ==============================================
+    fileInput.addEventListener('change', async (e) => {
+        const files = e.target.files;
+        if (!files.length) return;
+
+        fileList.style.display = "block";
+        knowledgeContent = "";
+
+        for (let file of files) {
+            // 显示文件名
+            fileList.innerHTML += `<div class="file-item">✅ ${file.name}</div>`;
+
+            // 读取文件文本内容
+            const text = await file.text();
+            knowledgeContent += `\n=== 文件名：${file.name} ===\n` + text;
+        }
+
+        alert(`已成功加载 ${files.length} 个文件到知识库！`);
+    });
+
+    // ==============================================
+    // 🔥 2. 调用豆包，基于文件内容回答
+    // ==============================================
+    async function askDoubao(question) {
+        try {
+            const prompt = knowledgeContent
+                ? `请根据以下文档内容回答问题，只基于内容，不要编造：\n【文档内容】：\n${knowledgeContent}\n【用户问题】：${question}`
+                : `请回答问题：${question}`;
+
+            const res = await fetch("https://api.deviluna.com/doubao", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    model: "Doubao-4",
+                    messages: [{ role: "user", content: prompt }]
+                })
+            });
+
+            const data = await res.json();
+            return data.answer || "抱歉，无法获取回答";
+        } catch (err) {
+            return "请求失败，请检查网络";
+        }
+    }
+
+    // ==============================================
+    // 发送消息
+    // ==============================================
+    sendBtn.addEventListener('click', async () => {
+        const text = questionInput.value.trim();
+        if (!text) return;
+
+        // 显示用户问题
+        chatBox.innerHTML += `<div class="message user-message">${text}</div>`;
+        questionInput.value = '';
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // 加载提示
+        chatBox.innerHTML += `<div class="message ai-message">思考中...</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // 获取AI回答
+        const answer = await askDoubao(text);
+
+        // 显示最终回答
+        chatBox.lastElementChild.textContent = answer;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+
+    // 回车发送
+    questionInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendBtn.click();
+        }
+    });
+</script>
 </body>
 </html>
