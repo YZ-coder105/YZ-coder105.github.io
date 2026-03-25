@@ -3,98 +3,298 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小爱网站</title>
+    <title>万能小爱</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: linear-gradient(135deg, #f0f4ff 0%, #d9e2ff 100%);
-            min-height: 100vh;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            height: 100vh;
+            overflow: hidden;
+            background: #f8f9fc;
         }
 
-        .card {
-            background: white;
-            max-width: 600px;
-            width: 100%;
-            padding: 50px 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 30, 80, 0.1);
-            text-align: center;
-            animation: fadeIn 0.8s ease;
+        /* —— 左侧栏 —— 加宽到 160px，文字一行显示 */
+        .sidebar {
+            width: 160px; /* 从120px加宽到160px，保证文字不换行 */
+            background: #eef2ff;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .avatar {
-            width: 90px;
-            height: 90px;
-            background: #4a6cf7;
-            border-radius: 50%;
-            margin: 0 auto 20px;
+        .sidebar-header {
+            padding: 16px 12px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 8px;
+            color: #1e40af;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap; /* 强制不换行 */
+        }
+
+        .sidebar-logo {
+            width: 24px;
+            height: 24px;
+            background: #1e40af;
+            border-radius: 6px;
+            display: grid;
+            place-items: center;
             color: white;
-            font-size: 32px;
             font-weight: bold;
         }
 
-        h1 {
-            font-size: 32px;
-            color: #222;
-            margin-bottom: 12px;
+        .sidebar-menu {
+            flex: 1;
+            padding: 8px 0;
         }
 
-        .desc {
-            font-size: 16px;
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 14px 30px;
-            background: #4a6cf7;
-            color: white;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: 0.3s;
-        }
-
-        .btn:hover {
-            background: #3558e2;
-            transform: translateY(-2px);
-        }
-
-        .footer {
-            margin-top: 40px;
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
             font-size: 14px;
-            color: #999;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap; /* 强制文字一行 */
+        }
+
+        .menu-item.active {
+            background: #dbeafe;
+            color: #1e40af;
+            font-weight: 500;
+        }
+
+        .menu-item:hover {
+            background: #e0e7ff;
+        }
+
+        .sidebar-footer {
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .footer-btn {
+            padding: 10px;
+            font-size: 13px;
+            color: #1e40af;
+            background: #e0e7ff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .login-btn {
+            background: #4f46e5;
+            color: white;
+            padding: 12px;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        /* —— 右侧主内容 —— */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .top-banner {
+            background: #e9d5ff;
+            color: #4c1d95;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: white;
+        }
+
+        .title {
+            font-size: 28px;
+            color: #1e40af;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        /* —— 搜索框—— */
+        .search-box {
+            width: 60%;
+            border: 2px solid #93c5fd;
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .search-input {
+            border: none;
+            outline: none;
+            font-size: 15px;
+            resize: none;
+            min-height: 60px;
+        }
+
+        .search-tools {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tools-left {
+            display: flex;
+            gap: 12px;
+            color: #64748b;
+        }
+
+        .tools-right {
+            display: flex;
+            gap: 16px;
+            color: #64748b;
+        }
+
+        .send-btn {
+            background: #9ca3af;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            cursor: pointer;
+        }
+
+        /* —— 功能卡片 —— */
+        .cards {
+            display: flex;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .card {
+            width: 100px;
+            padding: 16px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 13px;
+            color: #334155;
+            cursor: pointer;
+        }
+
+        .card-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .more-card {
+            background: #4f46e5;
+            color: white;
+            display: grid;
+            place-items: center;
         }
     </style>
 </head>
-
 <body>
-    <div class="card">
-        <div class="avatar">我</div>
-        <h1>小爱网站</h1>
-        <p class="desc">搭建成功！这是一个可随时扩展功能、增加接口的现代化个人网站。</p>
-        <a href="about.html" class="btn">进入主页</a>
-        <div class="footer">© 2025 My Website</div>
+    <!-- 左侧栏 -->
+    <div class="sidebar">
+        <div class="sidebar-header" onclick="location.href='index.html'">
+            <div class="sidebar-logo">🤖</div>
+            万能小爱
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-item active">💬 AI提问</div>
+            <div class="menu-item">✍️ AI写作</div>
+            <div class="menu-item">📖 AI写书</div>
+            <div class="menu-item">📚 知识库</div>
+            <div class="menu-item">🔍 学术搜索</div>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="footer-btn">⬇️ 下载APP</button>
+            <button class="footer-btn">✓ 使用攻略</button>
+            <button class="footer-btn login-btn">登录</button>
+        </div>
+    </div>
+
+    <!-- 右侧主内容 -->
+    <div class="main">
+        <div class="top-banner">
+            万能小爱学术搜索功能已上线！打破知识边界，让科研探索无限
+        </div>
+        <div class="content">
+            <div class="title">AI驱动，知识无界</div>
+            <div class="search-box">
+                <textarea class="search-input" placeholder="想了解什么知识，快来问问我！Shfit+Enter/Ctrl+Enter换行"></textarea>
+                <div class="search-tools">
+                    <div class="tools-left">
+                        <span>🌐</span>
+                        <span>🎓</span>
+                        <span>🧠</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="tools-right">
+                        <span>🎤</span>
+                        <span>🖼️</span>
+                        <span>📎</span>
+                        <button class="send-btn">➤</button>
+                    </div>
+                </div>
+            </div>
+            <div class="cards">
+                <div class="card">
+                    <div class="card-icon">📄</div>
+                    论文助手
+                </div>
+                <div class="card">
+                    <div class="card-icon">📊</div>
+                    PPT
+                </div>
+                <div class="card">
+                    <div class="card-icon">📚</div>
+                    AI写书
+                </div>
+                <div class="card">
+                    <div class="card-icon">📈</div>
+                    智能图表
+                </div>
+                <div class="card">
+                    <div class="card-icon">📄</div>
+                    文献综述
+                </div>
+                <div class="card">
+                    <div class="card-icon">📝</div>
+                    心得体会
+                </div>
+                <div class="card more-card">
+                    <div style="font-size:20px">150+</div>
+                    <div>更多应用 ></div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>
