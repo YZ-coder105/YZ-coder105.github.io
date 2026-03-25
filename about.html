@@ -3,319 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小问AI-知识无界</title>
+    <title>小问AI</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif;
         }
 
         body {
             display: flex;
             height: 100vh;
             overflow: hidden;
-            background: #ffffff;
+            background: #fff;
         }
 
-        /* —————— 左侧边栏 —————— */
+        /* 左侧边栏 —— 浅蓝色 */
         .sidebar {
-            width: 240px;
-            background: #F7F8FA;
-            border-right: 1px solid #E5E7EB;
+            width: 180px;
+            background: #e8f0fe;
+            border-right: 1px solid #d3e3fd;
             display: flex;
             flex-direction: column;
         }
 
-        .logo {
-            padding: 28px 24px 20px;
-            font-size: 20px;
+        .sidebar-logo {
+            padding: 22px 16px;
+            font-size: 22px;
             font-weight: 600;
-            color: #165DFF;
-        }
-
-        .menu-list {
-            flex: 1;
-            padding: 8px;
+            color: #165dff;
         }
 
         .menu-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 13px 16px;
-            border-radius: 8px;
+            gap: 8px;
+            padding: 12px 16px;
             font-size: 15px;
-            color: #374151;
+            color: #333;
             cursor: pointer;
-            margin-bottom: 4px;
-            transition: background 0.2s ease;
+            transition: all 0.2s;
         }
 
         .menu-item.active {
-            background: #EAF2FF !important;
-            color: #165DFF;
-            font-weight: 500;
+            background: #d3e3fd;
+            color: #165dff;
+            border-radius: 0 8px 8px 0;
         }
 
         .menu-item:hover {
-            background: #EEF4FF;
+            background: #d3e3fd;
         }
 
-        /* —————— 主内容区域 —————— */
-        .main-container {
+        /* 右侧主内容 —— 上下左右居中 */
+        .main {
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            padding: 20px;
         }
 
-        /* 顶部标题 */
-        .top-bar {
-            padding: 18px 28px;
-            border-bottom: 1px solid #E5E7EB;
-            font-size: 18px;
-            font-weight: 500;
-            color: #111827;
-        }
-
-        /* 聊天内容区 */
-        .chat-wrapper {
-            flex: 1;
-            padding: 28px;
-            overflow-y: auto;
-            background: #ffffff;
-        }
-
-        .chat-box {
-            max-width: 800px;
-            margin: 0 auto;
+        /* 聊天容器 */
+        .chat-container {
+            width: 100%;
+            max-width: 900px;
+            height: 80vh;
             display: flex;
             flex-direction: column;
-            gap: 22px;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
         }
 
         /* 消息气泡 */
-        .msg {
-            padding: 14px 18px;
-            border-radius: 14px;
-            font-size: 15px;
-            line-height: 1.6;
-            max-width: 85%;
-            word-break: break-word;
-        }
-
-        .msg-user {
-            background: #165DFF;
-            color: #ffffff;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-
-        .msg-ai {
-            background: #F4F5F7;
-            color: #111827;
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-        }
-
-        /* —————— 底部输入框 —————— */
-        .input-bar {
-            border-top: 1px solid #E5E7EB;
-            padding: 18px 28px;
-        }
-
-        .input-group {
-            max-width: 800px;
-            margin: 0 auto;
-            border: 1px solid #D1D5DB;
-            border-radius: 16px;
+        .bubble {
+            max-width: 75%;
             padding: 12px 16px;
-            display: flex;
-            align-items: flex-end;
-            gap: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease;
         }
 
-        #inputText {
+        .bubble-ai {
+            align-self: flex-start;
+            background: #f4f5f7;
+            color: #333;
+        }
+
+        .bubble-user {
+            align-self: flex-end;
+            background: #165dff;
+            color: #fff;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ======================
+           搜索框：超大尺寸 + 圆角 + 加粗边框
+        ====================== */
+        .input-wrapper {
+            width: 85%;         /* 大幅放大 → 更协调 */
+            height: 80px;       /* 更高更大气 */
+            border: 2px solid #d1d5db;
+            border-radius: 20px;/* 圆角更美观 */
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-top: 0;
+        }
+
+        .input-wrapper textarea {
             flex: 1;
             border: none;
             outline: none;
             resize: none;
-            font-size: 15px;
-            min-height: 24px;
-            max-height: 120px;
-            line-height: 1.5;
-        }
-
-        .tool-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 16px;
+            height: 100%;
         }
 
         .tool-icon {
-            width: 32px;
-            height: 32px;
-            display: grid;
-            place-items: center;
-            border-radius: 6px;
+            font-size: 22px;
+            color: #666;
             cursor: pointer;
-            font-size: 16px;
-            transition: background 0.2s;
-        }
-
-        .tool-icon:hover {
-            background: #F4F5F7;
         }
 
         .send-btn {
-            background: #165DFF;
+            background: #165dff;
             color: white;
             border: none;
-            border-radius: 8px;
-            padding: 8px 14px;
+            border-radius: 10px;
+            padding: 14px 28px;
             cursor: pointer;
-            font-size: 14px;
-            transition: background 0.2s;
+            font-size: 15px;
         }
 
-        .send-btn:hover {
-            background: #0F4BD1;
-        }
-
-        /* 页面通用隐藏 */
-        .page {
-            display: none;
-        }
-
-        .page.active {
-            display: flex;
-        }
-
-        .page-block {
-            display: none;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .page-block.active {
-            display: block;
-        }
-
-        /* 知识库上传 */
-        .knowledge-upload {
-            border: 1px dashed #D1D5DB;
-            border-radius: 12px;
-            padding: 32px;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .knowledge-upload p {
-            color: #6B7280;
-            margin-bottom: 16px;
-        }
+        /* 页面切换 */
+        .page { display: none; }
+        .page.active { display: flex; }
     </style>
 </head>
 
 <body>
 
-    <!-- 左侧边栏 -->
-    <div class="sidebar">
-        <div class="logo">小问AI</div>
-        <div class="menu-list">
-            <div class="menu-item active" onclick="switchPage('chat')">💬 AI 问答</div>
-            <div class="menu-item" onclick="switchPage('knowledge')">📚 知识库</div>
-            <div class="menu-item" onclick="switchPage('search')">🔍 AI 搜索</div>
-            <div class="menu-item" onclick="location.href='index.html'">🏠 返回首页</div>
-        </div>
-    </div>
+<!-- 左侧栏 -->
+<div class="sidebar">
+    <div class="sidebar-logo">小问AI</div>
+    
+    <!-- 返回首页 放在第一个 -->
+    <div class="menu-item" onclick="location.href='index.html'">🏠 返回首页</div>
+    <div class="menu-item active" onclick="switchPage('chat')">💬 AI 问答</div>
+    <div class="menu-item" onclick="switchPage('knowledge')">📚 知识库</div>
+    <div class="menu-item" onclick="switchPage('search')">🔍 AI 搜索</div>
+</div>
 
-    <!-- 主内容 -->
-    <div class="main-container">
-        <div class="top-bar">AI 智能问答</div>
+<!-- 右侧内容（整体居中） -->
+<div class="main">
+    <div id="chatPage" class="page active">
+        <div class="chat-container">
+            <div id="chatBox"></div>
 
-        <div class="chat-wrapper">
-            <!-- 聊天页面 -->
-            <div id="chatPage" class="page active chat-box">
-                <div class="msg msg-ai">你好！我是你的AI助手，有什么可以帮你？</div>
-            </div>
-
-            <!-- 知识库页面 -->
-            <div id="knowledgePage" class="page-block">
-                <h3>📚 本地知识库管理</h3>
-                <div class="knowledge-upload">
-                    <p>支持上传：PDF / Word / TXT / 图片等文件</p>
-                    <input type="file" id="fileInput" multiple>
-                    <button onclick="uploadFiles()" style="margin-left:10px;padding:6px 12px;background:#165DFF;color:white;border:none;border-radius:6px;cursor:pointer">上传文件</button>
-                    <div id="fileList" style="margin-top:18px;text-align:left;"></div>
-                </div>
-            </div>
-
-            <!-- AI搜索页面 -->
-            <div id="searchPage" class="page-block">
-                <h3>🔍 AI 全网智能搜索</h3>
-                <p style="margin-top:12px;color:#6B7280">输入问题，AI将自动联网搜索并为你解答</p>
-            </div>
-        </div>
-
-        <!-- 底部输入 -->
-        <div class="input-bar">
-            <div class="input-group">
-                <textarea id="inputText" placeholder="输入问题，支持联网搜索、知识库检索、文件解析..."></textarea>
-                <div class="tool-group">
-                    <div class="tool-icon">📎</div>
-                    <div class="tool-icon">🖼️</div>
-                    <button class="send-btn" onclick="sendMsg()">发送</button>
-                </div>
+            <!-- 提示文字放入搜索框内 -->
+            <div class="input-wrapper">
+                <textarea id="inputText" placeholder="你好！我是你的AI助手，有什么可以帮你？"></textarea>
+                <div class="tool-icon">📎</div>
+                <div class="tool-icon">🖼️</div>
+                <button class="send-btn" onclick="sendMessage()">发送</button>
             </div>
         </div>
     </div>
 
-    <script>
-        // 切换页面
-        function switchPage(page) {
-            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
-            document.querySelectorAll('.page, .page-block').forEach(p => p.classList.remove('active'));
+    <div id="knowledgePage" class="page" style="text-align:center;">
+        <h3>📚 本地知识库</h3>
+        <input type="file" multiple style="margin-top:20px;">
+        <button style="margin-left:10px;padding:8px 16px;background:#165dff;color:white;border:none;border-radius:4px;">上传</button>
+    </div>
 
-            if (page === 'chat') {
-                document.getElementById('chatPage').classList.add('active');
-            } else if (page === 'knowledge') {
-                document.getElementById('knowledgePage').classList.add('active');
-            } else if (page === 'search') {
-                document.getElementById('searchPage').classList.add('active');
-            }
+    <div id="searchPage" class="page" style="text-align:center;">
+        <h3>🔍 AI 全网搜索</h3>
+    </div>
+</div>
 
-            document.querySelector(`.menu-item:nth-child(${page === 'chat' ? 1 : page === 'knowledge' ? 2 : 3})`).classList.add('active');
-        }
+<script>
+    const chatBox = document.getElementById("chatBox");
+    const inputText = document.getElementById("inputText");
 
-        // 发送消息
-        function sendMsg() {
-            const input = document.getElementById('inputText');
-            const text = input.value.trim();
-            if (!text) return;
+    function switchPage(page) {
+        document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+        document.querySelectorAll(".menu-item").forEach(item => item.classList.remove("active"));
+        document.getElementById(page + "Page").classList.add("active");
+        event.currentTarget.classList.add("active");
+    }
 
-            const chat = document.getElementById('chatPage');
-            chat.innerHTML += `<div class="msg msg-user">${text}</div>`;
-            input.value = '';
+    function sendMessage() {
+        const text = inputText.value.trim();
+        if (!text) return;
 
-            setTimeout(() => {
-                chat.innerHTML += `<div class="msg msg-ai">AI 正在思考...<br><br>✅ 已联网搜索<br>✅ 已检索知识库<br>✅ 已分析文件内容</div>`;
-                chat.scrollTop = chat.scrollHeight;
-            }, 700);
-        }
+        chatBox.innerHTML += `<div class="bubble bubble-user">${text}</div>`;
+        inputText.value = "";
 
-        // 上传文件到知识库
-        function uploadFiles() {
-            const files = document.getElementById('fileInput').files;
-            const list = document.getElementById('fileList');
-            list.innerHTML = '';
-            for (let file of files) {
-                list.innerHTML += `<div style='padding:6px 0'>✅ ${file.name}</div>`;
-            }
-            alert('文件已成功上传至知识库，AI可直接调用！');
-        }
-    </script>
+        setTimeout(() => {
+            chatBox.innerHTML += `<div class="bubble bubble-ai">AI 正在思考...<br>✅ 已联网搜索<br>✅ 已检索知识库</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }, 600);
+    }
+</script>
+
 </body>
 </html>
