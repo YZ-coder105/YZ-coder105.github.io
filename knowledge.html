@@ -188,6 +188,21 @@
             font-size: 14px;
         }
 
+        .file-list {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 6px;
+        }
+        .file-item {
+            padding: 6px 10px;
+            background: white;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            font-size:13px;
+            border:1px solid #e2e8f0;
+        }
+
         .empty-tip {
             text-align: center;
             font-size: 14px;
@@ -248,14 +263,13 @@
             font-weight: 600;
         }
 
-        /* 🔥 修复1：缩小红框内文字，使界面更紧凑 */
         .step-content h4 {
-            font-size: 14px; /* 缩小 */
+            font-size: 14px;
             color: #1e293b;
             margin-bottom: 4px;
         }
         .step-content p {
-            font-size: 12px; /* 缩小 */
+            font-size: 12px;
             color: #64748b;
         }
 
@@ -275,13 +289,12 @@
             margin-bottom: 16px;
         }
 
-        /* 🔥 修复2：缩小右侧对话气泡字体，统一视觉 */
         .message {
             margin-bottom: 12px;
             padding: 10px 14px;
             border-radius: 10px;
             max-width: 85%;
-            font-size: 13px; /* 全局缩小字体 */
+            font-size: 13px;
             line-height: 1.5;
         }
 
@@ -365,9 +378,9 @@
         <div class="knowledge-header">
             <div class="knowledge-title"><span>🧠</span> 知识库</div>
             <div class="header-actions">
-                <button class="btn btn-outline" onclick="document.getElementById('fileInput').click()">📁 新建文件夹</button>
+                <button class="btn btn-outline" onclick="newFolder()">📁 新建文件夹</button>
                 <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">➕ 添加文件</button>
-                <input type="file" id="fileInput" style="display:none" multiple>
+                <input type="file" id="fileInput" style="display:none;" multiple>
             </div>
         </div>
 
@@ -427,54 +440,101 @@
     const questionInput = document.getElementById('question');
     const sendBtn = document.getElementById('sendBtn');
     const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
 
-    // 1. 上传文件读取逻辑
+    // 新建文件夹
+    function newFolder() {
+        const name = prompt("输入文件夹名称");
+        if (name) {
+            fileList.style.display = "block";
+            fileList.innerHTML += `<div class="file-item">📁 ${name}</div>`;
+        }
+    }
+
+    // 上传文件读取内容
     fileInput.addEventListener('change', async (e) => {
         const files = e.target.files;
         if (!files.length) return;
-
         fileList.style.display = "block";
         knowledgeContent = "";
 
-        for (let file of files) {
-            fileList.innerHTML += `<div class="file-item">✅ ${file.name}</div>`;
-            const text = await file.text();
-            // 限制本地知识库内容长度，避免发送过大
-            knowledgeContent += `\n=== 文件名：${file.name} ===\n` + text.slice(0, 3000); 
+        for (let f of files) {
+            fileList.innerHTML += `<div class="file-item">✅ ${f.name}</div>`;
+            let t = await f.text();
+            knowledgeContent += `\n=== ${f.name} ===\n` + t.slice(0, 3000);
         }
-        alert(`已成功加载 ${files.length} 个文件到本地知识库！`);
+        alert(`已加载 ${files.length} 个文件`);
     });
 
-    // 2. 🔥 核心：优先本地知识库，其次联网回答
-    async function askDoubao(question) {
-        // 如果没有上传任何内容，直接联网回答
+    // ==============================================
+    // 🔥 核心智能逻辑：优先知识库 → 失败自动联网AI
+    // ==============================================
+    async function askAI(question) {
+        // 1. 没上传文件 → 直接联网回答
         if (!knowledgeContent) {
-            return "🔴 请先上传文档，我将基于文档内容为你回答（当前为模拟回答）";
+            return await normalAI(question);
         }
 
         try {
-            // 构造强制引用知识库的 Prompt
-            const systemPrompt = `
-                你是万能小爱知识库助手。
-                请严格根据我提供给你的【文档内容】进行回答，不要编造任何未知信息。
-                文档内容如下：
-                \`\`\`
-                ${knowledgeContent}
-                \`\`\`
-                请基于以上内容，用简洁专业的语言回答用户问题。
-            `;
-
+            // 2. 优先：基于本地知识库回答
             const res = await fetch("https://api.mnapi.top/v1/chat/completions", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    model: "doubao-pro-32k", // 使用豆包专业版
-                    messages: [{ role: "user", content: systemPrompt }]
+                    model: "doubao-pro-32k",
+                    messages: [{
+                        role: "user",
+                        content: `你是知识库助手，只根据文档回答，不编造：\n文档：${knowledgeContent}\n问题：${question}`
+                    }]
                 })
             });
-
             const data = await res.json();
-            // ✅ 成功获取基于文档的回答
-            return data.choices[0]?.message?.content || "🟢 已读取文档，但暂无匹配内容";
-        } catch (err) {
-            // 🟡 联网
+            return "📘 基于知识库回答：\n" + (data.choices[0]?.message?.content || "未找到相关内容");
+        } catch (e) {
+            // 3. 知识库接口失败 → 自动切换成 联网通用AI
+            return "⚠️ 知识库接口不可用，已自动切换为联网回答：\n" + await normalAI(question);
+        }
+    }
+
+    // 普通联网AI（兜底）
+    async function normalAI(question) {
+        try {
+            const res = await fetch("https://api.mnapi.top/v1/chat/completions", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    model: "doubao-pro-32k",
+                    messages: [{ role: "user", content: question }]
+                })
+            });
+            const d = await res.json();
+            return d.choices[0]?.message?.content || "AI 回答失败";
+        } catch {
+            return "网络异常，请检查连接";
+        }
+    }
+
+    // 发送
+    sendBtn.onclick = async () => {
+        const t = questionInput.value.trim();
+        if (!t) return;
+
+        chatBox.innerHTML += `<div class="message user-message">${t}</div>`;
+        questionInput.value = "";
+        chatBox.scrollTop = 9999;
+
+        chatBox.innerHTML += `<div class="message ai-message">思考中...</div>`;
+        let ans = await askAI(t);
+        chatBox.lastElementChild.textContent = ans;
+        chatBox.scrollTop = 9999;
+    };
+
+    questionInput.onkeydown = e => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            sendBtn.click();
+        }
+    };
+</script>
+</body>
+</html>
