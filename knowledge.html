@@ -177,7 +177,7 @@
         .search-bar {
             display: flex;
             gap: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .search-bar input {
@@ -188,19 +188,44 @@
             font-size: 14px;
         }
 
-        .file-list {
-            margin: 10px 0;
-            padding: 10px;
-            background: #f8fafc;
-            border-radius: 6px;
+        /* 文件夹区域 */
+        .folder-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
         }
-        .file-item {
-            padding: 6px 10px;
+        .folder-item {
+            padding: 8px 12px;
+            background: #e0e7ff;
+            border: 1px solid #1d4ed8;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .folder-item.active {
+            background: #1d4ed8;
+            color: white;
+        }
+
+        /* 文件区域 */
+        .file-group {
+            margin-bottom: 20px;
+        }
+        .file-card {
+            padding: 8px 12px;
             background: white;
-            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 13px;
             margin-bottom: 6px;
-            font-size:13px;
-            border:1px solid #e2e8f0;
+        }
+        .file-card.highlight {
+            background: #fff9c4;
+            border-color: #fbc02d;
         }
 
         .empty-tip {
@@ -275,7 +300,7 @@
 
         .knowledge-right {
             width: 40%;
-            background: #f8fafc;
+            background: #f8f9fc;
             border-left: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
@@ -330,9 +355,15 @@
 
         .question-tools {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             align-items: center;
-            gap: 16px;
+        }
+
+        .folder-check-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            font-size: 12px;
         }
 
         .send-btn {
@@ -349,6 +380,10 @@
             color: #9ca3af;
             text-align: center;
             margin-top: 12px;
+        }
+
+        #fileInput {
+            display: none;
         }
     </style>
 </head>
@@ -378,54 +413,57 @@
         <div class="knowledge-header">
             <div class="knowledge-title"><span>🧠</span> 知识库</div>
             <div class="header-actions">
-                <button class="btn btn-outline" onclick="newFolder()">📁 新建文件夹</button>
-                <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">➕ 添加文件</button>
-                <input type="file" id="fileInput" style="display:none;" multiple>
+                <button class="btn btn-outline" onclick="createFolder()">📁 新建文件夹</button>
+                <button class="btn btn-primary" onclick="selectFolderAndUpload()">➕ 添加文件</button>
             </div>
         </div>
 
         <div class="search-bar">
-            <input type="text" placeholder="搜索文件名、文件夹名称">
-            <button class="btn btn-primary">搜索</button>
+            <input id="searchInput" type="text" placeholder="搜索所有文件名称">
+            <button class="btn btn-primary" onclick="doSearch()">搜索</button>
         </div>
 
-        <div id="fileList" class="file-list" style="display:none;">
-            <h4 style="margin-bottom:8px;font-size:14px;color:#1e40af;">已上传文件</h4>
-        </div>
+        <!-- 文件夹展示区（搜索框正下方） -->
+        <div id="folderList" class="folder-group"></div>
 
-        <div class="empty-tip">当前目录下暂无文件，上传一个文件，开始使用您的知识库吧</div>
+        <!-- 文件展示区 -->
+        <div id="fileList" class="file-group"></div>
+
+        <div class="empty-tip">请新建文件夹并上传文件，开始使用知识库</div>
 
         <div class="hero-card">
             <div class="hero-icon">🧠</div>
             <div class="hero-title">搭建你的AI数字外脑</div>
             <div class="hero-desc">文档越多，提问创作越准确</div>
-            <button class="btn btn-outline" style="background:white;color:#1e40af;" onclick="document.getElementById('fileInput').click()">➕ 添加文件</button>
         </div>
 
         <div class="steps">
             <div class="step">
                 <div class="step-number">1</div>
-                <div class="step-content"><h4>上传文档</h4><p>支持 TXT、PDF、DOCX 等文档</p></div>
+                <div class="step-content"><h4>新建文件夹</h4><p>分类管理你的文档</p></div>
             </div>
             <div class="step">
                 <div class="step-number">2</div>
-                <div class="step-content"><h4>向文档提问</h4><p>AI 自动读取内容并回答</p></div>
+                <div class="step-content"><h4>上传文件到文件夹</h4><p>支持 TXT、PDF、DOCX</p></div>
             </div>
             <div class="step">
                 <div class="step-number">3</div>
-                <div class="step-content"><h4>基于文档写作</h4><p>精准引用文档内容</p></div>
+                <div class="step-content"><h4>勾选文件夹提问</h4><p>AI 只读取选中内容</p></div>
             </div>
         </div>
     </div>
 
     <div class="knowledge-right">
         <div class="chat-box" id="chatBox">
-            <div class="message ai-message">你好！请上传文件，我将基于文档内容为你回答 😊</div>
+            <div class="message ai-message">你好！请先创建文件夹并上传文件，再勾选文件夹进行提问 😊</div>
         </div>
 
         <div class="question-input">
             <textarea id="question" placeholder="对知识库进行提问（基于豆包大模型）"></textarea>
+            
             <div class="question-tools">
+                <!-- 提问时勾选文件夹 -->
+                <div id="askFolderCheck" class="folder-check-group"></div>
                 <button class="send-btn" id="sendBtn">➤ 发送</button>
             </div>
         </div>
@@ -434,49 +472,194 @@
     </div>
 </div>
 
+<input type="file" id="fileInput" multiple>
+
 <script>
-    let knowledgeContent = "";
+    // ==============================================
+    // 全局数据结构
+    // ==============================================
+    let folders = []; // 文件夹列表 { id, name, files: [] }
+    let folderId = 1;
+
+    const folderListEl = document.getElementById('folderList');
+    const fileListEl = document.getElementById('fileList');
+    const askFolderCheckEl = document.getElementById('askFolderCheck');
     const chatBox = document.getElementById('chatBox');
     const questionInput = document.getElementById('question');
     const sendBtn = document.getElementById('sendBtn');
     const fileInput = document.getElementById('fileInput');
-    const fileList = document.getElementById('fileList');
+    const searchInput = document.getElementById('searchInput');
 
-    // 新建文件夹
-    function newFolder() {
+    // ==============================================
+    // 1. 新建文件夹（显示在搜索框下方）
+    // ==============================================
+    function createFolder() {
         const name = prompt("输入文件夹名称");
-        if (name) {
-            fileList.style.display = "block";
-            fileList.innerHTML += `<div class="file-item">📁 ${name}</div>`;
-        }
+        if (!name) return;
+
+        const folder = {
+            id: folderId++,
+            name: name,
+            files: []
+        };
+        folders.push(folder);
+
+        renderFolders();
+        renderAskCheckboxes();
     }
 
-    // 上传文件读取内容
-    fileInput.addEventListener('change', async (e) => {
-        const files = e.target.files;
-        if (!files.length) return;
-        fileList.style.display = "block";
-        knowledgeContent = "";
-
-        for (let f of files) {
-            fileList.innerHTML += `<div class="file-item">✅ ${f.name}</div>`;
-            let t = await f.text();
-            knowledgeContent += `\n=== ${f.name} ===\n` + t.slice(0, 3000);
-        }
-        alert(`已加载 ${files.length} 个文件`);
-    });
+    // 渲染左侧文件夹
+    function renderFolders() {
+        folderListEl.innerHTML = '';
+        folders.forEach(f => {
+            const div = document.createElement('div');
+            div.className = 'folder-item';
+            div.innerText = `📁 ${f.name}`;
+            div.onclick = () => showFolderFiles(f.id);
+            folderListEl.appendChild(div);
+        });
+    }
 
     // ==============================================
-    // 🔥 核心智能逻辑：优先知识库 → 失败自动联网AI
+    // 2. 选择文件夹 + 上传文件
+    // ==============================================
+    function selectFolderAndUpload() {
+        if (folders.length === 0) {
+            alert("请先新建文件夹！");
+            return;
+        }
+
+        const names = folders.map(f => `${f.id}. ${f.name}`).join('\n');
+        const selectId = prompt(`请选择要上传的文件夹编号：\n${names}`);
+        const fid = Number(selectId);
+        const folder = folders.find(f => f.id === fid);
+
+        if (!folder) {
+            alert("文件夹不存在");
+            return;
+        }
+
+        fileInput.onchange = async (e) => {
+            const files = e.target.files;
+            if (!files.length) return;
+
+            for (let file of files) {
+                const text = await file.text();
+                folder.files.push({
+                    name: file.name,
+                    content: text.slice(0, 3000)
+                });
+            }
+
+            showFolderFiles(fid);
+            alert(`已上传 ${files.length} 个文件到【${folder.name}】`);
+        };
+
+        fileInput.click();
+    }
+
+    // 显示某个文件夹内的文件
+    function showFolderFiles(fid) {
+        const folder = folders.find(f => f.id === fid);
+        if (!folder) return;
+
+        fileListEl.innerHTML = `<h4 style="margin-bottom:8px;font-size:14px;color:#1e40af;">📂 ${folder.name}</h4>`;
+
+        folder.files.forEach(file => {
+            const div = document.createElement('div');
+            div.className = 'file-card';
+            div.innerText = `✅ ${file.name}`;
+            fileListEl.appendChild(div);
+        });
+    }
+
+    // ==============================================
+    // 🔥 新增：全局搜索所有文件
+    // ==============================================
+    function doSearch() {
+        const keyword = searchInput.value.trim().toLowerCase();
+        if (!keyword) {
+            alert("请输入搜索关键词");
+            return;
+        }
+
+        let results = [];
+        folders.forEach(folder => {
+            folder.files.forEach(file => {
+                if (file.name.toLowerCase().includes(keyword)) {
+                    results.push({ folder: folder.name, file: file.name });
+                }
+            });
+        });
+
+        if (results.length === 0) {
+            fileListEl.innerHTML = `<div style="color:#ef4444;margin:10px 0;">❌ 未找到包含「${keyword}」的文件</div>`;
+            return;
+        }
+
+        fileListEl.innerHTML = `<h4 style="margin-bottom:10px;color:#1e40af;">🔍 搜索结果（共 ${results.length} 个）</h4>`;
+        results.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'file-card highlight';
+            div.innerText = `📁 ${item.folder} → ✅ ${item.file}`;
+            fileListEl.appendChild(div);
+        });
+    }
+
+    // ==============================================
+    // 3. 提问面板：渲染文件夹勾选框
+    // ==============================================
+    function renderAskCheckboxes() {
+        askFolderCheckEl.innerHTML = '';
+        folders.forEach(f => {
+            const label = document.createElement('label');
+            label.style.display = 'flex';
+            label.style.alignItems = 'center';
+            label.style.gap = '4px';
+
+            const input = document.createElement('input');
+            input.type = 'checkbox';
+            input.value = f.id;
+            input.className = 'ask-folder-checkbox';
+
+            label.appendChild(input);
+            label.append(` ${f.name}`);
+            askFolderCheckEl.appendChild(label);
+        });
+    }
+
+    // ==============================================
+    // 4. 获取选中文件夹的所有内容
+    // ==============================================
+    function getSelectedFolderContent() {
+        const checks = document.querySelectorAll('.ask-folder-checkbox:checked');
+        if (checks.length === 0) return '';
+
+        let content = '';
+        checks.forEach(c => {
+            const fid = Number(c.value);
+            const folder = folders.find(f => f.id === fid);
+            if (!folder) return;
+
+            content += `\n=== 文件夹：${folder.name} ===\n`;
+            folder.files.forEach(file => {
+                content += `\n--- 文件：${file.name} ---\n${file.content}`;
+            });
+        });
+        return content;
+    }
+
+    // ==============================================
+    // 5. AI 提问：优先选中文件夹 → 联网兜底
     // ==============================================
     async function askAI(question) {
-        // 1. 没上传文件 → 直接联网回答
+        const knowledgeContent = getSelectedFolderContent();
+
         if (!knowledgeContent) {
-            return await normalAI(question);
+            return "❗ 请先勾选要提问的文件夹，并确保里面有文件";
         }
 
         try {
-            // 2. 优先：基于本地知识库回答
             const res = await fetch("https://api.mnapi.top/v1/chat/completions", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -484,19 +667,17 @@
                     model: "doubao-pro-32k",
                     messages: [{
                         role: "user",
-                        content: `你是知识库助手，只根据文档回答，不编造：\n文档：${knowledgeContent}\n问题：${question}`
+                        content: `你是知识库助手，只根据以下文档回答，不编造：\n${knowledgeContent}\n问题：${question}`
                     }]
                 })
             });
             const data = await res.json();
-            return "📘 基于知识库回答：\n" + (data.choices[0]?.message?.content || "未找到相关内容");
+            return "📘 基于选中文件夹回答：\n" + (data.choices[0]?.message?.content || "未找到相关内容");
         } catch (e) {
-            // 3. 知识库接口失败 → 自动切换成 联网通用AI
-            return "⚠️ 知识库接口不可用，已自动切换为联网回答：\n" + await normalAI(question);
+            return "⚠️ 知识库接口不可用，自动切换联网回答：\n" + await normalAI(question);
         }
     }
 
-    // 普通联网AI（兜底）
     async function normalAI(question) {
         try {
             const res = await fetch("https://api.mnapi.top/v1/chat/completions", {
@@ -514,19 +695,21 @@
         }
     }
 
-    // 发送
+    // ==============================================
+    // 发送按钮
+    // ==============================================
     sendBtn.onclick = async () => {
         const t = questionInput.value.trim();
         if (!t) return;
 
         chatBox.innerHTML += `<div class="message user-message">${t}</div>`;
         questionInput.value = "";
-        chatBox.scrollTop = 9999;
+        chatBox.scrollTop = 99999;
 
         chatBox.innerHTML += `<div class="message ai-message">思考中...</div>`;
-        let ans = await askAI(t);
+        const ans = await askAI(t);
         chatBox.lastElementChild.textContent = ans;
-        chatBox.scrollTop = 9999;
+        chatBox.scrollTop = 99999;
     };
 
     questionInput.onkeydown = e => {
