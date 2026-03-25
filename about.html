@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小问AI</title>
+    <title>万能小爱</title>
     <style>
         * {
             margin: 0;
@@ -16,206 +16,288 @@
             display: flex;
             height: 100vh;
             overflow: hidden;
-            background: #fff;
+            background: #f8f9fc;
         }
 
-        /* 左侧边栏 —— 浅蓝色 */
+        /* —— 左侧栏—— */
         .sidebar {
-            width: 180px;
-            background: #e8f0fe;
-            border-right: 1px solid #d3e3fd;
+            width: 120px;
+            background: #eef2ff;
+            border-right: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
         }
 
-        .sidebar-logo {
-            padding: 22px 16px;
-            font-size: 22px;
+        .sidebar-header {
+            padding: 16px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1e40af;
+            font-size: 18px;
             font-weight: 600;
-            color: #165dff;
+        }
+
+        .sidebar-logo {
+            width: 24px;
+            height: 24px;
+            background: #1e40af;
+            border-radius: 6px;
+            display: grid;
+            place-items: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 8px 0;
         }
 
         .menu-item {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             padding: 12px 16px;
-            font-size: 15px;
-            color: #333;
+            font-size: 14px;
+            color: #334155;
             cursor: pointer;
             transition: all 0.2s;
         }
 
         .menu-item.active {
-            background: #d3e3fd;
-            color: #165dff;
-            border-radius: 0 8px 8px 0;
+            background: #dbeafe;
+            color: #1e40af;
+            font-weight: 500;
         }
 
         .menu-item:hover {
-            background: #d3e3fd;
+            background: #e0e7ff;
         }
 
-        /* 右侧主内容 —— 上下左右居中 */
+        .menu-item .badge {
+            margin-left: auto;
+            background: #ef4444;
+            color: white;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        .sidebar-footer {
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .footer-btn {
+            padding: 10px;
+            font-size: 13px;
+            color: #1e40af;
+            background: #e0e7ff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .login-btn {
+            background: #4f46e5;
+            color: white;
+            padding: 12px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* —— 右侧主内容 —— */
         .main {
             flex: 1;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: #fff;
-            padding: 20px;
+            overflow: hidden;
         }
 
-        /* 聊天容器 */
-        .chat-container {
-            width: 100%;
-            max-width: 900px;
-            height: 80vh;
+        .top-banner {
+            background: #e9d5ff;
+            color: #4c1d95;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .content {
+            flex: 1;
             display: flex;
             flex-direction: column;
+            align-items: center;
             justify-content: center;
-            align-items: center;
-            gap: 50px;
+            padding: 20px;
+            background: white;
         }
 
-        /* 消息气泡 */
-        .bubble {
-            max-width: 75%;
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 14px;
-            line-height: 1.5;
-            animation: fadeIn 0.3s ease;
+        .title {
+            font-size: 28px;
+            color: #1e40af;
+            font-weight: 600;
+            margin-bottom: 24px;
         }
 
-        .bubble-ai {
-            align-self: flex-start;
-            background: #f4f5f7;
-            color: #333;
-        }
-
-        .bubble-user {
-            align-self: flex-end;
-            background: #165dff;
-            color: #fff;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ======================
-           搜索框：超大尺寸 + 圆角 + 加粗边框
-        ====================== */
-        .input-wrapper {
-            width: 85%;         /* 大幅放大 → 更协调 */
-            height: 80px;       /* 更高更大气 */
-            border: 2px solid #d1d5db;
-            border-radius: 20px;/* 圆角更美观 */
-            padding: 0 30px;
+        /* —— 搜索框—— */
+        .search-box {
+            width: 60%;
+            border: 2px solid #93c5fd;
+            border-radius: 10px;
+            padding: 16px;
             display: flex;
-            align-items: center;
-            gap: 18px;
-            margin-top: 0;
+            flex-direction: column;
+            gap: 16px;
         }
 
-        .input-wrapper textarea {
-            flex: 1;
+        .search-input {
             border: none;
             outline: none;
+            font-size: 15px;
             resize: none;
-            font-size: 16px;
-            height: 100%;
+            min-height: 60px;
         }
 
-        .tool-icon {
-            font-size: 22px;
-            color: #666;
-            cursor: pointer;
+        .search-tools {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tools-left {
+            display: flex;
+            gap: 12px;
+            color: #64748b;
+        }
+
+        .tools-right {
+            display: flex;
+            gap: 16px;
+            color: #64748b;
         }
 
         .send-btn {
-            background: #165dff;
+            background: #9ca3af;
             color: white;
             border: none;
-            border-radius: 10px;
-            padding: 14px 28px;
+            border-radius: 6px;
+            padding: 6px 12px;
             cursor: pointer;
-            font-size: 15px;
         }
 
-        /* 页面切换 */
-        .page { display: none; }
-        .page.active { display: flex; }
+        /* —— 功能卡片 —— */
+        .cards {
+            display: flex;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .card {
+            width: 100px;
+            padding: 16px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 13px;
+            color: #334155;
+            cursor: pointer;
+        }
+
+        .card-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .more-card {
+            background: #4f46e5;
+            color: white;
+            display: grid;
+            place-items: center;
+        }
     </style>
 </head>
-
 <body>
-
-<!-- 左侧栏 -->
-<div class="sidebar">
-    <div class="sidebar-logo">小问AI</div>
-    
-    <!-- 返回首页 放在第一个 -->
-    <div class="menu-item" onclick="location.href='index.html'">🏠 返回首页</div>
-    <div class="menu-item active" onclick="switchPage('chat')">💬 AI 问答</div>
-    <div class="menu-item" onclick="switchPage('knowledge')">📚 知识库</div>
-    <div class="menu-item" onclick="switchPage('search')">🔍 AI 搜索</div>
-</div>
-
-<!-- 右侧内容（整体居中） -->
-<div class="main">
-    <div id="chatPage" class="page active">
-        <div class="chat-container">
-            <div id="chatBox"></div>
-
-            <!-- 提示文字放入搜索框内 -->
-            <div class="input-wrapper">
-                <textarea id="inputText" placeholder="你好！我是你的AI助手，有什么可以帮你？"></textarea>
-                <div class="tool-icon">📎</div>
-                <div class="tool-icon">🖼️</div>
-                <button class="send-btn" onclick="sendMessage()">发送</button>
-            </div>
+    <!-- 左侧栏 -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">🤖</div>
+            万能小in
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-item active">🏠 首页</div>
+            <div class="menu-item">💬 AI提问</div>
+            <div class="menu-item">✍️ AI写作</div>
+            <div class="menu-item">📖 AI写书</div>
+            <div class="menu-item">📚 知识库</div>
+            <div class="menu-item">🔍 学术搜索</div>
+        </div>
+        <div class="sidebar-footer">
+            <button class="footer-btn">⬇️ 下载APP</button>
+            <button class="footer-btn">✓ 使用攻略</button>
+            <button class="footer-btn login-btn">登录</button>
         </div>
     </div>
 
-    <div id="knowledgePage" class="page" style="text-align:center;">
-        <h3>📚 本地知识库</h3>
-        <input type="file" multiple style="margin-top:20px;">
-        <button style="margin-left:10px;padding:8px 16px;background:#165dff;color:white;border:none;border-radius:4px;">上传</button>
+    <!-- 右侧主内容 -->
+    <div class="main">
+        <div class="top-banner">
+            万能小爱学术搜索功能已上线！打破知识边界，让科研探索无限
+        </div>
+        <div class="content">
+            <div class="title">AI驱动，知识无界</div>
+            <div class="search-box">
+                <textarea class="search-input" placeholder="想了解什么知识，快来问问我！Shfit+Enter/Ctrl+Enter换行"></textarea>
+                <div class="search-tools">
+                    <div class="tools-left">
+                        <span>🌐</span>
+                        <span>🎓</span>
+                        <span>🧠</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="tools-right">
+                        <span>🎤</span>
+                        <span>🖼️</span>
+                        <span>📎</span>
+                        <button class="send-btn">➤</button>
+                    </div>
+                </div>
+            </div>
+            <div class="cards">
+                <div class="card">
+                    <div class="card-icon">📄</div>
+                    论文助手
+                </div>
+                <div class="card">
+                    <div class="card-icon">📊</div>
+                    PPT
+                </div>
+                <div class="card">
+                    <div class="card-icon">📚</div>
+                    AI写书
+                </div>
+                <div class="card">
+                    <div class="card-icon">📈</div>
+                    智能图表
+                </div>
+                <div class="card">
+                    <div class="card-icon">📄</div>
+                    文献综述
+                </div>
+                <div class="card">
+                    <div class="card-icon">📝</div>
+                    心得体会
+                </div>
+                <div class="card more-card">
+                    <div style="font-size:20px">150+</div>
+                    <div>更多应用 ></div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div id="searchPage" class="page" style="text-align:center;">
-        <h3>🔍 AI 全网搜索</h3>
-    </div>
-</div>
-
-<script>
-    const chatBox = document.getElementById("chatBox");
-    const inputText = document.getElementById("inputText");
-
-    function switchPage(page) {
-        document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-        document.querySelectorAll(".menu-item").forEach(item => item.classList.remove("active"));
-        document.getElementById(page + "Page").classList.add("active");
-        event.currentTarget.classList.add("active");
-    }
-
-    function sendMessage() {
-        const text = inputText.value.trim();
-        if (!text) return;
-
-        chatBox.innerHTML += `<div class="bubble bubble-user">${text}</div>`;
-        inputText.value = "";
-
-        setTimeout(() => {
-            chatBox.innerHTML += `<div class="bubble bubble-ai">AI 正在思考...<br>✅ 已联网搜索<br>✅ 已检索知识库</div>`;
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }, 600);
-    }
-</script>
-
 </body>
 </html>
