@@ -19,7 +19,6 @@
             background: #f8f9fc;
         }
 
-        /* —— 左侧栏 —— 加宽到 160px，文字一行显示 */
         .sidebar {
             width: 160px;
             background: #eef2ff;
@@ -70,7 +69,6 @@
             border: 2px solid transparent;
         }
 
-        /* 🔥 鼠标悬浮时显示效果，移开消失 */
         .menu-item:hover {
             background: #dbeafe;
             color: #1e40af;
@@ -99,7 +97,6 @@
             transition: all 0.2s ease;
         }
 
-        /* 🔥 左下角按钮 悬浮高亮 */
         .footer-btn:hover {
             border: 2px solid #1d4ed8;
             box-shadow: 0 0 8px #3b82f6;
@@ -116,7 +113,6 @@
             white-space: nowrap;
         }
 
-        /* —— 右侧主内容 —— */
         .main {
             flex: 1;
             display: flex;
@@ -149,7 +145,6 @@
             margin-bottom: 24px;
         }
 
-        /* —— 搜索框 —— */
         .search-box {
             width: 60%;
             border: 2px solid #93c5fd;
@@ -161,7 +156,6 @@
             transition: all 0.2s ease;
         }
 
-        /* 🔥 搜索框悬浮时高亮 */
         .search-box:hover {
             border: 2px solid #1d4ed8;
             box-shadow: 0 0 10px #3b82f6;
@@ -203,12 +197,6 @@
             transition: all 0.2s ease;
         }
 
-        .send-btn:hover {
-            background: #6b7280;
-            transform: scale(0.95);
-        }
-
-        /* —— 功能卡片 —— */
         .cards {
             display: flex;
             gap: 16px;
@@ -228,7 +216,6 @@
             transition: all 0.2s ease;
         }
 
-        /* 卡片悬浮高亮 */
         .card:hover {
             border: 1px solid #1d4ed8;
             box-shadow: 0 0 8px #3b82f6;
@@ -249,7 +236,6 @@
     </style>
 </head>
 <body>
-    <!-- 左侧栏 -->
     <div class="sidebar">
         <div class="sidebar-header" onclick="location.href='index.html'">
             <div class="sidebar-logo">🤖</div>
@@ -257,10 +243,12 @@
         </div>
         
         <div class="sidebar-menu">
+            <div class="menu-item" onclick="location.href='index.html'">🏠 首页</div>
             <div class="menu-item">💬 AI提问</div>
             <div class="menu-item">✍️ AI写作</div>
             <div class="menu-item">📖 AI写书</div>
-            <div class="menu-item">📚 知识库</div>
+            <!-- 🔥 这里点击直接跳转到知识库 -->
+            <div class="menu-item" onclick="location.href='knowledge.html'">📚 知识库</div>
             <div class="menu-item">🔍 学术搜索</div>
         </div>
 
@@ -271,11 +259,8 @@
         </div>
     </div>
 
-    <!-- 右侧主内容 -->
     <div class="main">
-        <div class="top-banner">
-            欢迎来到万能小爱！
-        </div>
+        <div class="top-banner">欢迎来到万能小爱！</div>
         <div class="content">
             <div class="title">AI驱动，知识无界</div>
             <div class="search-box">
@@ -296,34 +281,13 @@
                 </div>
             </div>
             <div class="cards">
-                <div class="card">
-                    <div class="card-icon">📄</div>
-                    论文助手
-                </div>
-                <div class="card">
-                    <div class="card-icon">📊</div>
-                    PPT
-                </div>
-                <div class="card">
-                    <div class="card-icon">📚</div>
-                    AI写书
-                </div>
-                <div class="card">
-                    <div class="card-icon">📈</div>
-                    智能图表
-                </div>
-                <div class="card">
-                    <div class="card-icon">📄</div>
-                    文献综述
-                </div>
-                <div class="card">
-                    <div class="card-icon">📝</div>
-                    心得体会
-                </div>
-                <div class="card more-card">
-                    <div style="font-size:20px">150+</div>
-                    <div>更多应用 ></div>
-                </div>
+                <div class="card"><div class="card-icon">📄</div>论文助手</div>
+                <div class="card"><div class="card-icon">📊</div>PPT</div>
+                <div class="card"><div class="card-icon">📚</div>AI写书</div>
+                <div class="card"><div class="card-icon">📈</div>智能图表</div>
+                <div class="card"><div class="card-icon">📄</div>文献综述</div>
+                <div class="card"><div class="card-icon">📝</div>心得体会</div>
+                <div class="card more-card"><div style="font-size:20px">150+</div><div>更多应用 ></div></div>
             </div>
         </div>
     </div>
