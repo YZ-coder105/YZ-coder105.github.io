@@ -133,9 +133,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             padding: 20px;
             background: white;
+            overflow-y: auto;
         }
 
         .title {
@@ -143,6 +143,7 @@
             color: #1e40af;
             font-weight: 600;
             margin-bottom: 24px;
+            margin-top: 40px;
         }
 
         .search-box {
@@ -154,6 +155,7 @@
             flex-direction: column;
             gap: 16px;
             transition: all 0.2s ease;
+            background: #fff;
         }
 
         .search-box:hover {
@@ -179,22 +181,85 @@
             display: flex;
             gap: 12px;
             color: #64748b;
+            position: relative;
+        }
+
+        .search-type-icon {
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .search-type-icon:hover {
+            background: #eef2ff;
+        }
+
+        .search-type-menu {
+            position: absolute;
+            top: 24px;
+            left: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 10;
+            width: 130px;
+            display: none;
+        }
+        .search-type-item {
+            padding: 8px 12px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .search-type-item:hover {
+            background: #eef2ff;
+            color: #1e40af;
         }
 
         .tools-right {
             display: flex;
-            gap: 16px;
+            align-items: center;
+            gap: 10px;
             color: #64748b;
         }
 
+        /* 模型选择下拉框 */
+        .model-select {
+            padding: 4px 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            outline: none;
+            font-size: 13px;
+            background: #fff;
+            cursor: pointer;
+        }
+        .model-select:hover {
+            border-color: #1d4ed8;
+        }
+
         .send-btn {
-            background: #9ca3af;
+            background: #1d4ed8;
             color: white;
             border: none;
             border-radius: 6px;
             padding: 6px 12px;
             cursor: pointer;
             transition: all 0.2s ease;
+        }
+        .send-btn:hover {
+            background: #1e40af;
+        }
+
+        .answer-box {
+            width: 60%;
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            display: none;
         }
 
         .cards {
@@ -236,60 +301,120 @@
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <div class="sidebar-header" onclick="location.href='index.html'">
-            <div class="sidebar-logo">🤖</div>
-            万能小爱
-        </div>
-        
-        <div class="sidebar-menu">
-            <div class="menu-item" onclick="location.href='index.html'">🏠 首页</div>
-            <div class="menu-item">💬 AI提问</div>
-            <div class="menu-item">✍️ AI写作</div>
-            <div class="menu-item">📖 AI写书</div>
-            <!-- 🔥 这里点击直接跳转到知识库 -->
-            <div class="menu-item" onclick="location.href='knowledge.html'">📚 知识库</div>
-            <div class="menu-item">🔍 学术搜索</div>
-        </div>
-
-        <div class="sidebar-footer">
-            <button class="footer-btn">⬇️ 下载APP</button>
-            <button class="footer-btn">✓ 使用攻略</button>
-            <button class="footer-btn login-btn">登录</button>
-        </div>
+<div class="sidebar">
+    <div class="sidebar-header" onclick="location.href='index.html'">
+        <div class="sidebar-logo">🤖</div>
+        万能小爱
     </div>
+    <div class="sidebar-menu">
+        <div class="menu-item">💬 AI提问</div>
+        <div class="menu-item" onclick="location.href='knowledge.html'">📚 知识库</div>
+        <div class="menu-item">📊 PPT生成</div>
+    </div>
+    <div class="sidebar-footer">
+        <button class="footer-btn">⬇️ 下载APP</button>
+        <button class="footer-btn">✓ 使用攻略</button>
+        <button class="footer-btn login-btn">登录</button>
+    </div>
+</div>
 
-    <div class="main">
-        <div class="top-banner">欢迎来到万能小爱！</div>
-        <div class="content">
-            <div class="title">AI驱动，知识无界</div>
-            <div class="search-box">
-                <textarea class="search-input" placeholder="想了解什么知识，快来问问我！Shfit+Enter/Ctrl+Enter换行"></textarea>
-                <div class="search-tools">
-                    <div class="tools-left">
-                        <span>🌐</span>
-                        <span>🎓</span>
-                        <span>🧠</span>
-                        <span>▼</span>
-                    </div>
-                    <div class="tools-right">
-                        <span>🎤</span>
-                        <span>🖼️</span>
-                        <span>📎</span>
-                        <button class="send-btn">➤</button>
+<div class="main">
+    <div class="top-banner">欢迎来到万能小爱！</div>
+    <div class="content">
+        <div class="title">AI驱动，知识无界</div>
+        
+        <div class="search-box">
+            <textarea class="search-input" placeholder="想了解什么知识，快来问问我！Shfit+Enter换行"></textarea>
+            <div class="search-tools">
+                <div class="tools-left">
+                    <div class="search-type-icon" id="searchTypeIcon">🌐 联网搜索</div>
+                    <div class="search-type-menu" id="searchTypeMenu">
+                        <div class="search-type-item" data-type="online">🌐 联网搜索</div>
+                        <div class="search-type-item" data-type="local">📚 知识库搜索</div>
                     </div>
                 </div>
-            </div>
-            <div class="cards">
-                <div class="card"><div class="card-icon">📄</div>论文助手</div>
-                <div class="card"><div class="card-icon">📊</div>PPT</div>
-                <div class="card"><div class="card-icon">📚</div>AI写书</div>
-                <div class="card"><div class="card-icon">📈</div>智能图表</div>
-                <div class="card"><div class="card-icon">📄</div>文献综述</div>
-                <div class="card"><div class="card-icon">📝</div>心得体会</div>
-                <div class="card more-card"><div style="font-size:20px">150+</div><div>更多应用 ></div></div>
+                <div class="tools-right">
+                    <!-- 模型选择 -->
+                    <select class="model-select" id="modelSelect">
+                        <option value="qwen:0.5b">qwen:0.5b</option>
+                        <option value="llama3">llama3</option>
+                        <option value="gemma">gemma</option>
+                        <option value="glm4">glm4</option>
+                        <option value="qwen">qwen</option>
+                        <option value="phi3">phi3</option>
+                    </select>
+                    <button class="send-btn" id="sendBtn">➤ 发送</button>
+                </div>
             </div>
         </div>
+
+        <div class="answer-box" id="answerBox"></div>
+
+        <div class="cards">
+            <div class="card"><div class="card-icon">📄</div>论文助手</div>
+            <div class="card"><div class="card-icon">📊</div>PPT</div>
+            <div class="card"><div class="card-icon">📚</div>AI写书</div>
+            <div class="card"><div class="card-icon">📈</div>智能图表</div>
+            <div class="card"><div class="card-icon">📄</div>文献综述</div>
+            <div class="card"><div class="card-icon">📝</div>心得体会</div>
+            <div class="card more-card"><div style="font-size:20px">150+</div><div>更多应用 ></div></div>
+        </div>
     </div>
+</div>
+
+<script>
+    const searchTypeIcon = document.getElementById('searchTypeIcon');
+    const searchTypeMenu = document.getElementById('searchTypeMenu');
+    const searchInput = document.querySelector('.search-input');
+    const sendBtn = document.getElementById('sendBtn');
+    const answerBox = document.getElementById('answerBox');
+    const modelSelect = document.getElementById('modelSelect'); // 模型选择器
+
+    let currentSearchType = 'online';
+
+    // 搜索类型切换
+    searchTypeIcon.onclick = (e) => { e.stopPropagation(); searchTypeMenu.style.display = searchTypeMenu.style.display === 'block' ? 'none' : 'block'; };
+    document.querySelectorAll('.search-type-item').forEach(item => {
+        item.onclick = () => { currentSearchType = item.dataset.type; searchTypeIcon.innerHTML = item.innerHTML; searchTypeMenu.style.display = 'none'; };
+    });
+    document.onclick = () => { searchTypeMenu.style.display = 'none'; };
+
+    // =============== OLLAMA 本地调用 + 手动选模型 ===============
+    async function askOllama(question) {
+        answerBox.style.display = 'block';
+        answerBox.innerText = '⏳ 本地模型思考中...';
+        
+        try {
+            const res = await fetch("http://localhost:11434/api/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    model: modelSelect.value, // 从下拉框获取模型
+                    prompt: question,
+                    stream: false
+                })
+            });
+            
+            const data = await res.json();
+            return "✅ " + modelSelect.value + " 回答：\n" + data.response;
+        } catch (err) {
+            return "✅ 本地内置回答：\n你好！我是万能小爱，很高兴为你服务～\n（请启动 Ollama 后使用完整功能）";
+        }
+    }
+
+    async function sendQuestion() {
+        const q = searchInput.value.trim();
+        if (!q) return;
+        const ans = await askOllama(q);
+        answerBox.innerText = ans;
+    }
+
+    sendBtn.onclick = sendQuestion;
+    searchInput.onkeydown = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault(); sendQuestion();
+        }
+    };
+</script>
 </body>
 </html>
