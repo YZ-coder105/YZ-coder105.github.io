@@ -373,20 +373,12 @@
     });
     document.onclick = () => { searchTypeMenu.style.display = 'none'; };
 
-    // =============== 修复版：自动识别本地Ollama模型 ===============
+    // 直接访问已确认可用的地址
     async function loadLocalModels() {
         try {
-            // 同时尝试 localhost + 127.0.0.1，解决99%识别问题
-            let response;
-            try {
-                response = await fetch('http://127.0.0.1:11434/api/tags');
-            } catch {
-                response = await fetch('http://localhost:11434/api/tags');
-            }
-
-            const data = await response.json();
+            const res = await fetch('http://127.0.0.1:11434/api/tags');
+            const data = await res.json();
             modelSelect.innerHTML = '';
-
             if (data.models?.length) {
                 data.models.forEach(m => {
                     const opt = document.createElement('option');
@@ -395,35 +387,25 @@
                     modelSelect.appendChild(opt);
                 });
                 modelSelect.selectedIndex = 0;
-                banner.textContent = `✅ 已连接 Ollama，加载到 ${data.models.length} 个模型`;
+                banner.textContent = `✅ 连接成功！已加载 ${data.models.length} 个本地模型`;
                 banner.style.background = '#dcfce7';
                 banner.style.color = '#166534';
             } else {
-                modelSelect.innerHTML = '<option>未找到模型</option>';
-                banner.textContent = '⚠️ Ollama 已启动，但未安装模型';
+                modelSelect.innerHTML = '<option>未安装模型</option>';
+                banner.textContent = '⚠️ Ollama 已启动，但未下载模型';
             }
         } catch (err) {
             console.error(err);
-            modelSelect.innerHTML = `
-                <option value="qwen:0.5b">qwen:0.5b</option>
-                <option value="llama3">llama3</option>
-                <option value="gemma">gemma</option>
-                <option value="glm4">glm4</option>
-            `;
+            modelSelect.innerHTML = '<option value="qwen:7b">qwen:7b</option>';
             banner.textContent = '❌ 无法连接 Ollama，请确保服务已启动';
             banner.style.background = '#fee2e2';
             banner.style.color = '#991b1b';
-            
-            // 自动重试
-            setTimeout(loadLocalModels, 3000);
         }
     }
 
-    // =============== 提问函数 ===============
     async function askOllama(question) {
         answerBox.style.display = 'block';
         answerBox.innerText = '⏳ 模型思考中...';
-        
         try {
             const res = await fetch('http://127.0.0.1:11434/api/generate', {
                 method: 'POST',
@@ -437,7 +419,7 @@
             const data = await res.json();
             return `✅ ${modelSelect.value} 回答：\n` + data.response;
         } catch (err) {
-            return '✅ 万能小爱：\n你好！请确保 Ollama 已启动并安装模型';
+            return '✅ 万能小爱：\n请确保 Ollama 已启动并运行命令：ollama serve';
         }
     }
 
@@ -447,7 +429,6 @@
         answerBox.innerText = await askOllama(q);
     }
 
-    // 启动
     window.addEventListener('DOMContentLoaded', loadLocalModels);
     sendBtn.onclick = sendQuestion;
     searchInput.onkeydown = e => {
