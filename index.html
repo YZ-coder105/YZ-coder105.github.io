@@ -319,7 +319,7 @@
 </div>
 
 <div class="main">
-    <div class="top-banner">欢迎来到万能小爱！</div>
+    <div class="top-banner">欢迎来到万能小爱！已自动识别本地大模型</div>
     <div class="content">
         <div class="title">AI驱动，知识无界</div>
         
@@ -336,12 +336,7 @@
                 <div class="tools-right">
                     <!-- 模型选择 -->
                     <select class="model-select" id="modelSelect">
-                        <option value="qwen:0.5b">qwen:0.5b</option>
-                        <option value="llama3">llama3</option>
-                        <option value="gemma">gemma</option>
-                        <option value="glm4">glm4</option>
-                        <option value="qwen">qwen</option>
-                        <option value="phi3">phi3</option>
+                        <option value="">加载模型中...</option>
                     </select>
                     <button class="send-btn" id="sendBtn">➤ 发送</button>
                 </div>
@@ -368,7 +363,7 @@
     const searchInput = document.querySelector('.search-input');
     const sendBtn = document.getElementById('sendBtn');
     const answerBox = document.getElementById('answerBox');
-    const modelSelect = document.getElementById('modelSelect'); // 模型选择器
+    const modelSelect = document.getElementById('modelSelect');
 
     let currentSearchType = 'online';
 
@@ -379,7 +374,40 @@
     });
     document.onclick = () => { searchTypeMenu.style.display = 'none'; };
 
-    // =============== OLLAMA 本地调用 + 手动选模型 ===============
+    // =============== 核心功能：自动获取本地Ollama模型 ===============
+    async function loadLocalModels() {
+        try {
+            // 请求Ollama API获取已安装模型
+            const response = await fetch('http://localhost:11434/api/tags');
+            const data = await response.json();
+            
+            // 清空原有选项
+            modelSelect.innerHTML = '';
+            
+            // 动态添加模型
+            if (data.models && data.models.length > 0) {
+                data.models.forEach((model, index) => {
+                    const option = document.createElement('option');
+                    option.value = model.name;
+                    option.textContent = model.name;
+                    modelSelect.appendChild(option);
+                });
+                // 默认选中第一个模型
+                modelSelect.selectedIndex = 0;
+                document.querySelector('.top-banner').textContent = `✅ 成功加载本地模型：${data.models.length} 个`;
+            } else {
+                modelSelect.innerHTML = '<option value="">未检测到模型</option>';
+                document.querySelector('.top-banner').textContent = '⚠️ 未检测到Ollama模型，请先下载模型';
+            }
+        } catch (error) {
+            // 未启动Ollama时的提示
+            modelSelect.innerHTML = '<option value="qwen:0.5b">默认模型</option>';
+            document.querySelector('.top-banner').textContent = '❌ 未启动Ollama服务，请启动后使用本地模型';
+            console.error('Ollama连接失败：', error);
+        }
+    }
+
+    // =============== OLLAMA 本地调用 + 自动加载模型 ===============
     async function askOllama(question) {
         answerBox.style.display = 'block';
         answerBox.innerText = '⏳ 本地模型思考中...';
@@ -389,7 +417,7 @@
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    model: modelSelect.value, // 从下拉框获取模型
+                    model: modelSelect.value,
                     prompt: question,
                     stream: false
                 })
@@ -408,6 +436,9 @@
         const ans = await askOllama(q);
         answerBox.innerText = ans;
     }
+
+    // 页面加载完成后自动获取本地模型
+    window.addEventListener('DOMContentLoaded', loadLocalModels);
 
     sendBtn.onclick = sendQuestion;
     searchInput.onkeydown = (e) => {
