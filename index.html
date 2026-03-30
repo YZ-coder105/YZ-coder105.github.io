@@ -265,6 +265,8 @@
             display: flex;
             gap: 16px;
             margin-top: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .card {
@@ -306,6 +308,7 @@
         万能小爱
     </div>
     <div class="sidebar-menu">
+        <div class="menu-item">💬 AI提问</div>
         <div class="menu-item" onclick="location.href='knowledge.html'">📚 知识库</div>
         <div class="menu-item">📊 PPT生成</div>
     </div>
@@ -363,6 +366,9 @@
     const modelSelect = document.getElementById('modelSelect');
     const banner = document.querySelector('.top-banner');
 
+    // 统一配置端口（以后改端口只改这里）
+    const OLLAMA_HOST = 'http://127.0.0.1:11435';
+
     let currentSearchType = 'online';
 
     // 搜索类型切换
@@ -372,10 +378,10 @@
     });
     document.onclick = () => { searchTypeMenu.style.display = 'none'; };
 
-    // 直接访问已确认可用的地址
+    // 加载本地模型
     async function loadLocalModels() {
         try {
-            const res = await fetch('http://127.0.0.1:11435/api/tags');
+            const res = await fetch(`${OLLAMA_HOST}/api/tags`);
             const data = await res.json();
             modelSelect.innerHTML = '';
             if (data.models?.length) {
@@ -402,11 +408,12 @@
         }
     }
 
+    // 发送问题给模型
     async function askOllama(question) {
         answerBox.style.display = 'block';
         answerBox.innerText = '⏳ 模型思考中...';
         try {
-            const res = await fetch('http://127.0.0.1:11435/api/generate', {
+            const res = await fetch(`${OLLAMA_HOST}/api/generate`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -422,6 +429,7 @@
         }
     }
 
+    // 发送按钮
     async function sendQuestion() {
         const q = searchInput.value.trim();
         if (!q) return;
@@ -432,7 +440,8 @@
     sendBtn.onclick = sendQuestion;
     searchInput.onkeydown = e => {
         if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault(); sendQuestion();
+            e.preventDefault();
+            sendQuestion();
         }
     };
 </script>
