@@ -376,7 +376,7 @@
     // 直接访问已确认可用的地址
     async function loadLocalModels() {
         try {
-            const res = await fetch('http://127.0.0.1:11434/api/tags');
+            const res = await fetch('http://127.0.0.1:11435/api/tags');
             const data = await res.json();
             modelSelect.innerHTML = '';
             if (data.models?.length) {
@@ -407,7 +407,7 @@
         answerBox.style.display = 'block';
         answerBox.innerText = '⏳ 模型思考中...';
         try {
-            const res = await fetch('http://127.0.0.1:11434/api/generate', {
+            const res = await fetch('http://127.0.0.1:11435/api/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
