@@ -25,6 +25,7 @@
             border-right: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
+            z-index: 10; /* 确保侧边栏在顶层 */
         }
 
         .sidebar-header {
@@ -96,14 +97,12 @@
             white-space: nowrap;
             transition: all 0.2s ease;
         }
-
         .footer-btn:hover {
             border: 2px solid #1d4ed8;
             box-shadow: 0 0 8px #3b82f6;
             background: #dbeafe;
             font-weight: 500;
         }
-
         .login-btn {
             background: #4f46e5;
             color: white;
@@ -113,11 +112,13 @@
             white-space: nowrap;
         }
 
+        /* 🔥 核心布局改造：主内容区 */
         .main {
             flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            position: relative;
         }
 
         .top-banner {
@@ -126,16 +127,22 @@
             padding: 10px;
             text-align: center;
             font-size: 14px;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            z-index: 5;
         }
 
-        .content {
+        /* ✅ 对话历史容器：占据除搜索框外的所有空间 */
+        .chat-container {
             flex: 1;
+            padding: 20px;
+            padding-bottom: 140px; /* 给底部搜索框留足空间，避免遮挡 */
+            overflow-y: auto;
+            background: white;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
-            background: white;
-            overflow-y: auto;
         }
 
         .title {
@@ -144,10 +151,51 @@
             font-weight: 600;
             margin-bottom: 24px;
             margin-top: 40px;
+            display: none; /* 隐藏原标题，因为现在是沉浸式对话 */
+        }
+
+        /* ✅ 对话历史样式 */
+        .chat-history {
+            width: 60%;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .chat-item {
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        .user-msg {
+            background: #dbeafe;
+            color: #1e3a8a;
+            align-self: flex-end;
+            max-width: 85%;
+        }
+        .bot-msg {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            align-self: flex-start;
+            max-width: 85%;
+        }
+
+        /* ✅ 搜索框容器：固定在底部 */
+        .search-container {
+            position: fixed;
+            bottom: 0;
+            left: 160px; /* 对应侧边栏宽度 */
+            right: 0;
+            background: #f8f9fc;
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            z-index: 5;
         }
 
         .search-box {
             width: 60%;
+            margin: 0 auto;
             border: 2px solid #93c5fd;
             border-radius: 10px;
             padding: 16px;
@@ -156,10 +204,10 @@
             gap: 16px;
             transition: all 0.2s ease;
             background: #fff;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
         }
-
         .search-box:hover {
-            border: 2px solid #1d4ed8;
+            border-color: #1d4ed8;
             box-shadow: 0 0 10px #3b82f6;
         }
 
@@ -260,84 +308,9 @@
             background: #1e40af;
         }
 
-        /* 对话历史样式（默认显示） */
-        .chat-history {
-            width: 60%;
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .chat-item {
-            padding: 14px 16px;
-            border-radius: 10px;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-        .user-msg {
-            background: #dbeafe;
-            color: #1e3a8a;
-            align-self: flex-end;
-            max-width: 85%;
-        }
-        .bot-msg {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            align-self: flex-start;
-            max-width: 85%;
-            white-space: pre-wrap;
-        }
-
-        .answer-box {
-            width: 60%;
-            margin-top: 20px;
-            padding: 16px;
-            border-radius: 10px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            font-size: 14px;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            display: none;
-        }
-
+        /* ✅ 彻底隐藏原来的功能卡片区域 */
         .cards {
-            display: flex;
-            gap: 16px;
-            margin-top: 24px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .card {
-            width: 100px;
-            padding: 16px;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            text-align: center;
-            font-size: 13px;
-            color: #334155;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .card:hover {
-            border: 1px solid #1d4ed8;
-            box-shadow: 0 0 8px #3b82f6;
-            background: #dbeafe;
-        }
-
-        .card-icon {
-            font-size: 32px;
-            margin-bottom: 8px;
-        }
-
-        .more-card {
-            background: #4f46e5;
-            color: white;
-            display: grid;
-            place-items: center;
+            display: none !important;
         }
     </style>
 </head>
@@ -361,11 +334,17 @@
 
 <div class="main">
     <div class="top-banner">正在连接 Ollama...</div>
-    <div class="content">
+    
+    <!-- ✅ 对话历史区域 -->
+    <div class="chat-container" id="chatContainer">
         <div class="title">AI驱动，知识无界</div>
-        
+        <div class="chat-history" id="chatHistory"></div>
+    </div>
+
+    <!-- ✅ 搜索框区域：固定在底部 -->
+    <div class="search-container">
         <div class="search-box">
-            <textarea class="search-input" placeholder="想了解什么知识，快来问问我！Shfit+Enter换行"></textarea>
+            <textarea class="search-input" id="searchInput" placeholder="想了解什么知识，快来问问我！Shfit+Enter换行"></textarea>
             <div class="search-tools">
                 <div class="tools-left">
                     <div class="search-type-icon" id="searchTypeIcon">🌐 联网搜索</div>
@@ -378,24 +357,10 @@
                     <select class="model-select" id="modelSelect">
                         <option value="">加载模型中...</option>
                     </select>
-                    <!-- ✅ 新增：开启新对话按钮 -->
                     <button class="new-chat-btn" id="newChatBtn">🔄 新对话</button>
                     <button class="send-btn" id="sendBtn">➤ 发送</button>
                 </div>
             </div>
-        </div>
-
-        <!-- ✅ 新增：默认显示对话历史 -->
-        <div class="chat-history" id="chatHistory"></div>
-
-        <div class="cards">
-            <div class="card"><div class="card-icon">📄</div>论文助手</div>
-            <div class="card"><div class="card-icon">📊</div>PPT</div>
-            <div class="card"><div class="card-icon">📚</div>AI写书</div>
-            <div class="card"><div class="card-icon">📈</div>智能图表</div>
-            <div class="card"><div class="card-icon">📄</div>文献综述</div>
-            <div class="card"><div class="card-icon">📝</div>心得体会</div>
-            <div class="card more-card"><div style="font-size:20px">150+</div><div>更多应用 ></div></div>
         </div>
     </div>
 </div>
@@ -403,17 +368,17 @@
 <script>
     const searchTypeIcon = document.getElementById('searchTypeIcon');
     const searchTypeMenu = document.getElementById('searchTypeMenu');
-    const searchInput = document.querySelector('.search-input');
+    const searchInput = document.getElementById('searchInput');
     const sendBtn = document.getElementById('sendBtn');
     const newChatBtn = document.getElementById('newChatBtn');
     const chatHistory = document.getElementById('chatHistory');
     const modelSelect = document.getElementById('modelSelect');
     const banner = document.querySelector('.top-banner');
+    const chatContainer = document.getElementById('chatContainer');
 
     const OLLAMA_HOST = 'http://127.0.0.1:11435';
 
     let currentSearchType = 'online';
-    // ✅ 存储对话历史（上下文）
     let conversation = [];
 
     // 搜索类型切换
@@ -451,7 +416,7 @@
         }
     }
 
-    // ✅ 渲染对话历史（默认显示）
+    // 渲染对话历史
     function renderHistory() {
         chatHistory.innerHTML = '';
         conversation.forEach(msg => {
@@ -460,10 +425,11 @@
             div.innerText = msg.content;
             chatHistory.appendChild(div);
         });
-        chatHistory.scrollTop = chatHistory.scrollHeight;
+        // 滚动到底部
+        chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
-    // ✅ 开启新对话（清空上下文）
+    // 开启新对话
     function startNewChat() {
         conversation = [];
         chatHistory.innerHTML = '';
@@ -471,9 +437,8 @@
         banner.textContent = '✅ 已开启新对话，上下文已清空';
     }
 
-    // ✅ 发送问题 + 携带上下文
+    // 发送问题 + 携带上下文
     async function askOllama(question) {
-        // 把历史对话拼进去 → 模型能记住上下文
         let prompt = conversation.map(i => 
             i.role === 'user' ? '用户：' + i.content : '助手：' + i.content
         ).join('\n') + '\n用户：' + question;
@@ -490,45 +455,8 @@
                 })
             });
             const data = await res.json();
-            return data.response || '无返回';
+            return data.response || '请求成功，但无返回内容';
         } catch (err) {
-            return '连接失败，请检查 Ollama';
+            console.error(err);
+            return '连接失败，请检查 Ollama 服务是否启动';
         }
-    }
-
-    // 发送逻辑
-    async function sendQuestion() {
-        const q = searchInput.value.trim();
-        if (!q) return;
-
-        // 加入历史
-        conversation.push({ role: 'user', content: q });
-        renderHistory();
-        searchInput.value = '';
-
-        // 思考中
-        const temp = { role: 'bot', content: '⏳ 思考中...' };
-        conversation.push(temp);
-        renderHistory();
-
-        // 获取回答
-        const ans = await askOllama(q);
-        conversation.pop();
-        conversation.push({ role: 'bot', content: ans });
-        renderHistory();
-    }
-
-    // 绑定事件
-    window.addEventListener('DOMContentLoaded', loadLocalModels);
-    sendBtn.onclick = sendQuestion;
-    newChatBtn.onclick = startNewChat;
-
-    searchInput.onkeydown = e => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendQuestion();
-        }
-    };
-</script>
-</body>
-</html>
