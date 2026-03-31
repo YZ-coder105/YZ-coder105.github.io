@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库 - 万能小爱</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background: #f8f9fc;
+        }
+
+        .sidebar {
+            width: 160px;
+            background: #eef2ff;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 999;
+        }
+
+        .sidebar-header {
+            padding: 16px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1e40af;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .sidebar-logo {
+            width: 24px;
+            height: 24px;
+            background: #1e40af;
+            border-radius: 6px;
+            display: grid;
+            place-items: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 8px 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            border-radius: 6px;
+            border: 2px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: #dbeafe;
+            color: #1e40af;
+            font-weight: 500;
+            border: 2px solid #1d4ed8;
+            box-shadow: 0 0 8px #3b82f6;
+        }
+
+        .sidebar-footer {
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .footer-btn {
+            padding: 10px;
+            font-size: 13px;
+            color: #1e40af;
+            background: #e0e7ff;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .footer-btn:hover {
+            border: 2px solid #1d4ed8;
+            box-shadow: 0 0 8px #3b82f6;
+            background: #dbeafe;
+            font-weight: 500;
+        }
+
+        .login-btn {
+            background: #4f46e5;
+            color: white;
+            padding: 12px;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .main {
+            flex: 1;
+            margin-left: 160px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: white;
+        }
+
+        .top-bar {
+            padding: 16px 30px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fafbfc;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e40af;
+        }
+
+        .tool-bar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-input {
+            padding: 6px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            outline: none;
+            width: 240px;
+        }
+
+        .btn {
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-primary {
+            background: #1d4ed8;
+            color: white;
+        }
+
+        .btn-success {
+            background: #16a34a;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .content {
+            padding: 30px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .folder-list {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .folder {
+            width: 140px;
+            height: 140px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            user-select: none;
+        }
+
+        .folder:hover {
+            border-color: #1d4ed8;
+            background: #dbeafe;
+        }
+
+        .folder-icon {
+            font-size: 40px;
+            color: #f59e0b;
+        }
+
+        .file-list {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 20px;
+        }
+
+        .file-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 6px;
+        }
+
+        .file-item:hover {
+            background: #f8fafc;
+        }
+
+        .file-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-icon {
+            color: #1d4ed8;
+            font-size: 18px;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .file-actions button {
+            font-size: 12px;
+            padding: 4px 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- 左侧栏 -->
+<div class="sidebar">
+    <div class="sidebar-header" onclick="location.href='index.html'">
+        <div class="sidebar-logo">🤖</div>万能小爱
+    </div>
+    <div class="sidebar-menu">
+        <div class="menu-item" onclick="location.href='index.html'">💬 AI提问</div>
+        <div class="menu-item" style="background:#dbeafe;color:#1e40af;font-weight:500;">📚 知识库</div>
+        <div class="menu-item">📊 PPT生成</div>
+    </div>
+    <div class="sidebar-footer">
+        <button class="footer-btn">⬇️ 下载APP</button>
+        <button class="footer-btn">✓ 使用攻略</button>
+        <button class="footer-btn login-btn">登录</button>
+    </div>
+</div>
+
+<!-- 右侧主体 -->
+<div class="main">
+    <div class="top-bar">
+        <div class="page-title">📁 知识库管理</div>
+        <div class="tool-bar">
+            <input type="text" class="search-input" id="searchInput" placeholder="搜索文件/文件夹..." oninput="searchItems()">
+            <button class="btn btn-primary" onclick="createFolder()">📂 新建文件夹</button>
+            <button class="btn btn-success" onclick="document.getElementById('fileUpload').click()">📤 上传文件</button>
+            <input type="file" id="fileUpload" multiple style="display:none;">
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="folder-list" id="folderList">
+            <div class="folder" onclick="openFolder(this)">
+                <div class="folder-icon">📁</div>
+                <div>论文资料</div>
+            </div>
+            <div class="folder" onclick="openFolder(this)">
+                <div class="folder-icon">📁</div>
+                <div>课程笔记</div>
+            </div>
+            <div class="folder" onclick="openFolder(this)">
+                <div class="folder-icon">📁</div>
+                <div>项目文档</div>
+            </div>
+        </div>
+
+        <div class="file-list" id="fileList">
+            <div class="file-item">
+                <div class="file-name">
+                    <div class="file-icon">📄</div>
+                    <div>深度学习基础.pdf</div>
+                </div>
+                <div class="file-actions">
+                    <button class="btn">查看</button>
+                    <button class="btn btn-danger" onclick="deleteFile(this)">删除</button>
+                </div>
+            </div>
+            <div class="file-item">
+                <div class="file-name">
+                    <div class="file-icon">📄</div>
+                    <div>AI报告.docx</div>
+                </div>
+                <div class="file-actions">
+                    <button class="btn">查看</button>
+                    <button class="btn btn-danger" onclick="deleteFile(this)">删除</button>
+                </div>
+            </div>
+            <div class="file-item">
+                <div class="file-name">
+                    <div class="file-icon">📄</div>
+                    <div>数据集说明.txt</div>
+                </div>
+                <div class="file-actions">
+                    <button class="btn">查看</button>
+                    <button class="btn btn-danger" onclick="deleteFile(this)">删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 新建文件夹
+    function createFolder() {
+        const name = prompt("请输入文件夹名称：");
+        if (!name) return;
+        
+        const folderList = document.getElementById("folderList");
+        const folder = document.createElement("div");
+        folder.className = "folder";
+        folder.onclick = () => openFolder(folder);
+        
+        folder.innerHTML = `
+            <div class="folder-icon">📁</div>
+            <div>${name}</div>
+        `;
+        folderList.appendChild(folder);
+    }
+
+    // 打开文件夹
+    function openFolder(folder) {
+        const name = folder.querySelector("div:last-child").innerText;
+        alert("进入文件夹：" + name);
+    }
+
+    // 上传文件
+    document.getElementById('fileUpload').onchange = function(e) {
+        const files = e.target.files;
+        if (!files.length) return;
+
+        const fileList = document.getElementById("fileList");
+        for (let file of files) {
+            const item = document.createElement("div");
+            item.className = "file-item";
+            item.innerHTML = `
+                <div class="file-name">
+                    <div class="file-icon">📄</div>
+                    <div>${file.name}</div>
+                </div>
+                <div class="file-actions">
+                    <button class="btn">查看</button>
+                    <button class="btn btn-danger" onclick="deleteFile(this)">删除</button>
+                </div>
+            `;
+            fileList.appendChild(item);
+        }
+        alert("已成功上传 " + files.length + " 个文件！");
+    }
+
+    // 删除文件
+    function deleteFile(btn) {
+        if (!confirm("确定删除该文件？")) return;
+        btn.closest(".file-item").remove();
+    }
+
+    // 搜索功能
+    function searchItems() {
+        const key = document.getElementById("searchInput").value.toLowerCase();
+        const folders = document.querySelectorAll(".folder");
+        const files = document.querySelectorAll(".file-item");
+
+        folders.forEach(f => {
+            const text = f.innerText.toLowerCase();
+            f.style.display = text.includes(key) ? "flex" : "none";
+        });
+
+        files.forEach(f => {
+            const text = f.innerText.toLowerCase();
+            f.style.display = text.includes(key) ? "flex" : "none";
+        });
+    }
+</script>
+
+</body>
+</html>
