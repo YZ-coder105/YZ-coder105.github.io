@@ -127,12 +127,15 @@
             padding: 10px;
             text-align: center;
             font-size: 14px;
+            flex-shrink: 0;
         }
 
+        /* ✅ 核心修复：增加底部内边距，确保不被遮挡 */
         .chat-container {
             flex: 1;
             padding: 20px;
-            padding-bottom: 140px;
+            /* 增加足够的底部空间，高度 = 搜索框高度 + 20px 安全边距 */
+            padding-bottom: 180px;
             overflow-y: auto;
             background: white;
             display: flex;
@@ -169,8 +172,9 @@
             max-width: 85%;
         }
 
+        /* ✅ 搜索框固定在底部 */
         .search-container {
-            position: fixed;
+            position: absolute;
             bottom: 0;
             left: 160px;
             right: 0;
@@ -178,6 +182,7 @@
             padding: 20px;
             border-top: 1px solid #e2e8f0;
             z-index: 10;
+            flex-shrink: 0;
         }
 
         .search-box {
@@ -312,7 +317,7 @@
 
     <div class="main">
         <div class="top-banner" id="topBanner">正在连接 Ollama...</div>
-        <div class="chat-container">
+        <div class="chat-container" id="chatContainer">
             <div class="chat-history" id="chatHistory"></div>
         </div>
 
@@ -346,8 +351,8 @@
         const chatHistory = document.getElementById('chatHistory');
         const modelSelect = document.getElementById('modelSelect');
         const topBanner = document.getElementById('topBanner');
+        const chatContainer = document.getElementById('chatContainer');
 
-        // ⬇️⬇️⬇️ 这里是你原来的端口！我没改！
         const OLLAMA_HOST = 'http://127.0.0.1:11435';
 
         let currentSearchType = 'online';
@@ -382,7 +387,7 @@
             }
         }
 
-        // 渲染对话
+        // ✅ 修复：渲染后自动滚动到底部，确保新消息可见
         function render() {
             chatHistory.innerHTML = '';
             conversation.forEach(msg => {
@@ -391,7 +396,8 @@
                 div.innerText = msg.content;
                 chatHistory.appendChild(div);
             });
-            chatHistory.scrollTop = chatHistory.scrollHeight;
+            // 强制滚动到最底部，确保最新消息完全可见
+            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
         // 新对话
