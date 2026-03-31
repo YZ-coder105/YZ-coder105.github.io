@@ -235,6 +235,18 @@
             border-color: #1d4ed8;
         }
 
+        .new-chat-btn {
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 6px 10px;
+            cursor: pointer;
+        }
+        .new-chat-btn:hover {
+            background: #e2e8f0;
+        }
+
         .send-btn {
             background: #1d4ed8;
             color: white;
@@ -246,6 +258,34 @@
         }
         .send-btn:hover {
             background: #1e40af;
+        }
+
+        /* 对话历史样式（默认显示） */
+        .chat-history {
+            width: 60%;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .chat-item {
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .user-msg {
+            background: #dbeafe;
+            color: #1e3a8a;
+            align-self: flex-end;
+            max-width: 85%;
+        }
+        .bot-msg {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            align-self: flex-start;
+            max-width: 85%;
+            white-space: pre-wrap;
         }
 
         .answer-box {
@@ -338,12 +378,15 @@
                     <select class="model-select" id="modelSelect">
                         <option value="">加载模型中...</option>
                     </select>
+                    <!-- ✅ 新增：开启新对话按钮 -->
+                    <button class="new-chat-btn" id="newChatBtn">🔄 新对话</button>
                     <button class="send-btn" id="sendBtn">➤ 发送</button>
                 </div>
             </div>
         </div>
 
-        <div class="answer-box" id="answerBox"></div>
+        <!-- ✅ 新增：默认显示对话历史 -->
+        <div class="chat-history" id="chatHistory"></div>
 
         <div class="cards">
             <div class="card"><div class="card-icon">📄</div>论文助手</div>
@@ -362,14 +405,16 @@
     const searchTypeMenu = document.getElementById('searchTypeMenu');
     const searchInput = document.querySelector('.search-input');
     const sendBtn = document.getElementById('sendBtn');
-    const answerBox = document.getElementById('answerBox');
+    const newChatBtn = document.getElementById('newChatBtn');
+    const chatHistory = document.getElementById('chatHistory');
     const modelSelect = document.getElementById('modelSelect');
     const banner = document.querySelector('.top-banner');
 
-    // 统一配置端口（以后改端口只改这里）
     const OLLAMA_HOST = 'http://127.0.0.1:11435';
 
     let currentSearchType = 'online';
+    // ✅ 存储对话历史（上下文）
+    let conversation = [];
 
     // 搜索类型切换
     searchTypeIcon.onclick = (e) => { e.stopPropagation(); searchTypeMenu.style.display = searchTypeMenu.style.display === 'block' ? 'none' : 'block'; };
@@ -378,7 +423,7 @@
     });
     document.onclick = () => { searchTypeMenu.style.display = 'none'; };
 
-    // 加载本地模型
+    // 加载模型
     async function loadLocalModels() {
         try {
             const res = await fetch(`${OLLAMA_HOST}/api/tags`);
@@ -391,7 +436,6 @@
                     opt.textContent = m.name;
                     modelSelect.appendChild(opt);
                 });
-                modelSelect.selectedIndex = 0;
                 banner.textContent = `✅ 连接成功！已加载 ${data.models.length} 个本地模型`;
                 banner.style.background = '#dcfce7';
                 banner.style.color = '#166534';
@@ -400,7 +444,6 @@
                 banner.textContent = '⚠️ Ollama 已启动，但未下载模型';
             }
         } catch (err) {
-            console.error(err);
             modelSelect.innerHTML = '<option value="qwen:7b">qwen:7b</option>';
             banner.textContent = '❌ 无法连接 Ollama，请确保服务已启动';
             banner.style.background = '#fee2e2';
@@ -408,36 +451,78 @@
         }
     }
 
-    // 发送问题给模型
+    // ✅ 渲染对话历史（默认显示）
+    function renderHistory() {
+        chatHistory.innerHTML = '';
+        conversation.forEach(msg => {
+            const div = document.createElement('div');
+            div.className = msg.role === 'user' ? 'chat-item user-msg' : 'chat-item bot-msg';
+            div.innerText = msg.content;
+            chatHistory.appendChild(div);
+        });
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+
+    // ✅ 开启新对话（清空上下文）
+    function startNewChat() {
+        conversation = [];
+        chatHistory.innerHTML = '';
+        searchInput.value = '';
+        banner.textContent = '✅ 已开启新对话，上下文已清空';
+    }
+
+    // ✅ 发送问题 + 携带上下文
     async function askOllama(question) {
-        answerBox.style.display = 'block';
-        answerBox.innerText = '⏳ 模型思考中...';
+        // 把历史对话拼进去 → 模型能记住上下文
+        let prompt = conversation.map(i => 
+            i.role === 'user' ? '用户：' + i.content : '助手：' + i.content
+        ).join('\n') + '\n用户：' + question;
+
         try {
             const res = await fetch(`${OLLAMA_HOST}/api/generate`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     model: modelSelect.value,
-                    prompt: question,
-                    stream: false
+                    prompt: prompt,
+                    stream: false,
+                    num_ctx: 8192
                 })
             });
             const data = await res.json();
-            return `✅ ${modelSelect.value} 回答：\n` + data.response;
+            return data.response || '无返回';
         } catch (err) {
-            return '✅ 万能小爱：\n请确保 Ollama 已启动并运行命令：ollama serve';
+            return '连接失败，请检查 Ollama';
         }
     }
 
-    // 发送按钮
+    // 发送逻辑
     async function sendQuestion() {
         const q = searchInput.value.trim();
         if (!q) return;
-        answerBox.innerText = await askOllama(q);
+
+        // 加入历史
+        conversation.push({ role: 'user', content: q });
+        renderHistory();
+        searchInput.value = '';
+
+        // 思考中
+        const temp = { role: 'bot', content: '⏳ 思考中...' };
+        conversation.push(temp);
+        renderHistory();
+
+        // 获取回答
+        const ans = await askOllama(q);
+        conversation.pop();
+        conversation.push({ role: 'bot', content: ans });
+        renderHistory();
     }
 
+    // 绑定事件
     window.addEventListener('DOMContentLoaded', loadLocalModels);
     sendBtn.onclick = sendQuestion;
+    newChatBtn.onclick = startNewChat;
+
     searchInput.onkeydown = e => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
