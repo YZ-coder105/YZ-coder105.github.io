@@ -25,6 +25,11 @@
             border-right: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 999;
         }
 
         .sidebar-header {
@@ -115,10 +120,11 @@
 
         .main {
             flex: 1;
+            margin-left: 160px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            position: relative;
+            height: 100vh;
         }
 
         .top-banner {
@@ -130,11 +136,9 @@
             flex-shrink: 0;
         }
 
-        /* ✅ 核心修复：增加底部内边距，确保不被遮挡 */
         .chat-container {
             flex: 1;
             padding: 20px;
-            /* 增加足够的底部空间，高度 = 搜索框高度 + 20px 安全边距 */
             padding-bottom: 180px;
             overflow-y: auto;
             background: white;
@@ -145,6 +149,7 @@
 
         .chat-history {
             width: 60%;
+            max-width: 900px;
             display: flex;
             flex-direction: column;
             gap: 16px;
@@ -172,22 +177,20 @@
             max-width: 85%;
         }
 
-        /* ✅ 搜索框固定在底部 */
+        /* 🔥 完美布局：搜索框紧贴左侧栏，无空隙 */
         .search-container {
-            position: absolute;
-            bottom: 0;
-            left: 160px;
-            right: 0;
             background: #f8f9fc;
-            padding: 20px;
+            padding: 20px 0;
             border-top: 1px solid #e2e8f0;
-            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             flex-shrink: 0;
         }
 
         .search-box {
             width: 60%;
-            margin: 0 auto;
+            max-width: 900px;
             border: 2px solid #93c5fd;
             border-radius: 10px;
             padding: 16px;
@@ -317,6 +320,7 @@
 
     <div class="main">
         <div class="top-banner" id="topBanner">正在连接 Ollama...</div>
+        
         <div class="chat-container" id="chatContainer">
             <div class="chat-history" id="chatHistory"></div>
         </div>
@@ -358,14 +362,12 @@
         let currentSearchType = 'online';
         let conversation = [];
 
-        // 搜索类型切换
         searchTypeIcon.onclick = (e) => { e.stopPropagation(); searchTypeMenu.style.display = searchTypeMenu.style.display=='block'?'none':'block'; }
         document.querySelectorAll('.search-type-item').forEach(item => {
             item.onclick = () => { currentSearchType = item.dataset.type; searchTypeIcon.innerHTML = item.innerHTML; searchTypeMenu.style.display='none'; }
         });
         document.onclick = () => { searchTypeMenu.style.display = 'none'; };
 
-        // 加载模型
         async function loadModels() {
             try {
                 const res = await fetch(`${OLLAMA_HOST}/api/tags`);
@@ -387,7 +389,6 @@
             }
         }
 
-        // ✅ 修复：渲染后自动滚动到底部，确保新消息可见
         function render() {
             chatHistory.innerHTML = '';
             conversation.forEach(msg => {
@@ -396,11 +397,9 @@
                 div.innerText = msg.content;
                 chatHistory.appendChild(div);
             });
-            // 强制滚动到最底部，确保最新消息完全可见
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
-        // 新对话
         function newChat() {
             conversation = [];
             chatHistory.innerHTML = '';
@@ -408,7 +407,6 @@
             topBanner.innerText = "✅ 已开启新对话";
         }
 
-        // 发送
         async function send() {
             const q = searchInput.value.trim();
             if (!q) return;
