@@ -259,6 +259,11 @@
             justify-content: space-between;
             align-items: center;
             border-radius: 6px;
+            cursor: grab;
+        }
+
+        .file-item:active {
+            cursor: grabbing;
         }
 
         .file-item:hover {
@@ -292,7 +297,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.6);
             display: none;
             align-items: center;
             justify-content: center;
@@ -303,8 +308,10 @@
             background: white;
             padding: 24px;
             border-radius: 10px;
-            width: 420px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
         }
 
         .modal-header {
@@ -312,6 +319,17 @@
             font-weight: 600;
             margin-bottom: 16px;
             color: #1e40af;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
         }
 
         .modal-input {
@@ -339,6 +357,30 @@
             justify-content: flex-end;
             gap: 10px;
         }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+
+        .preview-text {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 6px;
+            max-height: 60vh;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .preview-none {
+            padding: 40px;
+            text-align: center;
+            color: #666;
+        }
     </style>
 </head>
 
@@ -364,7 +406,10 @@
 <!-- 弹窗1：新建/重命名 -->
 <div class="modal" id="modal1">
     <div class="modal-content">
-        <div class="modal-header" id="modal1Title">标题</div>
+        <div class="modal-header">
+            <div id="modal1Title">标题</div>
+            <button class="close-btn" onclick="closeModal1()">×</button>
+        </div>
         <input type="text" class="modal-input" id="modal1Input" placeholder="请输入名称">
         <div class="modal-actions">
             <button class="btn btn-light" onclick="closeModal1()">取消</button>
@@ -373,15 +418,29 @@
     </div>
 </div>
 
-<!-- 弹窗2：移动文件/文件夹 -->
+<!-- 弹窗2：移动文件夹 -->
 <div class="modal" id="modal2">
     <div class="modal-content">
-        <div class="modal-header">移动到</div>
+        <div class="modal-header">
+            <div>移动到</div>
+            <button class="close-btn" onclick="closeModal2()">×</button>
+        </div>
         <select class="modal-select" id="moveTargetPath"></select>
         <div class="modal-actions">
             <button class="btn btn-light" onclick="closeModal2()">取消</button>
             <button class="btn btn-primary" onclick="confirmMove()">确定移动</button>
         </div>
+    </div>
+</div>
+
+<!-- 弹窗3：文件预览 -->
+<div class="modal" id="previewModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div id="previewTitle">文件预览</div>
+            <button class="close-btn" onclick="closePreview()">×</button>
+        </div>
+        <div id="previewBody"></div>
     </div>
 </div>
 
@@ -409,27 +468,28 @@
     let currentPath = '/';
     let pathStack = [{ name: '根目录', path: '/' }];
     let fileSystem = {
-        '/': { folders: ['论文资料', '课程笔记', '项目文档'], files: [
-            { name: '深度学习基础.pdf' },
-            { name: 'AI报告.docx' },
-            { name: '数据集说明.txt' }
-        ]},
+        '/': { folders: ['论文资料', '课程笔记', '项目文档'], files: [] },
         '/论文资料': { folders: [], files: [] },
         '/课程笔记': { folders: [], files: [] },
         '/项目文档': { folders: [], files: [] }
     };
 
     // 临时操作变量
-    let modal1Mode = ''; // createFolder / renameFolder / renameFile
+    let modal1Mode = '';
     let modal1Target = '';
-    let moveTarget = null; // {type:'folder'/'file', name:''}
+    let moveTarget = null;
+    let dragFileName = null;
+    let uploadedFiles = {}; // 存储真实上传的文件对象
 
     // DOM
     const modal1 = document.getElementById('modal1');
     const modal2 = document.getElementById('modal2');
+    const previewModal = document.getElementById('previewModal');
     const modal1Title = document.getElementById('modal1Title');
     const modal1Input = document.getElementById('modal1Input');
     const moveTargetPath = document.getElementById('moveTargetPath');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewBody = document.getElementById('previewBody');
     const fileUpload = document.getElementById('fileUpload');
     const folderList = document.getElementById('folderList');
     const fileList = document.getElementById('fileList');
@@ -439,6 +499,7 @@
     window.onload = () => {
         renderCurrentDir();
         fileUpload.onchange = uploadFiles;
+        enableDragFileToFolder();
     };
 
     // ========== 渲染 ==========
@@ -452,6 +513,7 @@
         dir.folders.forEach(name => {
             const f = document.createElement('div');
             f.className = 'folder';
+            f.setAttribute('data-folder', name);
             f.innerHTML = `
                 <div class="folder-icon">📁</div>
                 <div style="font-size:13px">${name}</div>
@@ -468,15 +530,17 @@
         dir.files.forEach(file => {
             const item = document.createElement('div');
             item.className = 'file-item';
+            item.setAttribute('draggable', true);
+            item.setAttribute('data-file', file.name);
             item.innerHTML = `
                 <div class="file-name">
                     <div class="file-icon">📄</div>
                     <div>${file.name}</div>
                 </div>
                 <div class="file-actions">
+                    <button class="btn btn-primary" onclick="viewFile('${file.name}')">查看</button>
                     <button class="btn btn-light" onclick="downloadFile('${file.name}')">下载</button>
                     <button class="btn btn-warning" onclick="openRenameFileModal('${file.name}')">重命名</button>
-                    <button class="btn btn-primary" onclick="openMoveFileModal('${file.name}')">移动</button>
                     <button class="btn btn-danger" onclick="deleteFile('${file.name}')">删除</button>
                 </div>`;
             fileList.appendChild(item);
@@ -498,6 +562,88 @@
                 pathNav.appendChild(s);
             }
         });
+    }
+
+    // ========== 拖拽文件到文件夹 ==========
+    function enableDragFileToFolder() {
+        document.addEventListener('dragstart', e => {
+            if(e.target.classList.contains('file-item')) {
+                dragFileName = e.target.getAttribute('data-file');
+            }
+        });
+
+        document.addEventListener('dragover', e => e.preventDefault());
+
+        document.addEventListener('drop', e => {
+            e.preventDefault();
+            const folder = e.target.closest('.folder');
+            if(!folder || !dragFileName) return;
+
+            const folderName = folder.getAttribute('data-folder');
+            const targetPath = currentPath === '/' ? `/${folderName}` : `${currentPath}/${folderName}`;
+
+            const srcDir = fileSystem[currentPath];
+            const destDir = fileSystem[targetPath];
+            const file = srcDir.files.find(f => f.name === dragFileName);
+
+            if(file && !destDir.files.some(f => f.name === dragFileName)) {
+                srcDir.files = srcDir.files.filter(f => f.name !== dragFileName);
+                destDir.files.push(file);
+                
+                // 移动真实文件对象
+                if(uploadedFiles[dragFileName]) {
+                    uploadedFiles[targetPath + dragFileName] = uploadedFiles[dragFileName];
+                    delete uploadedFiles[dragFileName];
+                }
+                
+                renderCurrentDir();
+            }
+            dragFileName = null;
+        });
+    }
+
+    // ========== 真实文件预览（图片/文本） ==========
+    function viewFile(fileName) {
+        const file = uploadedFiles[fileName];
+        if(!file) {
+            previewTitle.innerText = fileName;
+            previewBody.innerHTML = '<div class="preview-none">无法预览：文件未上传或已删除</div>';
+            previewModal.style.display = 'flex';
+            return;
+        }
+
+        previewTitle.innerText = fileName;
+        
+        // 图片预览
+        if(file.type.startsWith('image/')) {
+            const url = URL.createObjectURL(file);
+            previewBody.innerHTML = `<img src="${url}" class="preview-img">`;
+        }
+        // 文本预览
+        else if(file.type.startsWith('text/') || 
+                fileName.endsWith('.txt') || 
+                fileName.endsWith('.md') || 
+                fileName.endsWith('.json') || 
+                fileName.endsWith('.js') || 
+                fileName.endsWith('.css') || 
+                fileName.endsWith('.html')) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                previewBody.innerHTML = `<div class="preview-text">${e.target.result}</div>`;
+            };
+            reader.readAsText(file);
+        }
+        // 不支持预览
+        else {
+            previewBody.innerHTML = '<div class="preview-none">该文件类型暂不支持预览</div>';
+        }
+        
+        previewModal.style.display = 'flex';
+    }
+
+    function closePreview() {
+        previewModal.style.display = 'none';
+        previewBody.innerHTML = '';
     }
 
     // ========== 文件夹操作 ==========
@@ -545,8 +691,7 @@
                 dir.folders.push(val);
                 fileSystem[currentPath === '/' ? `/${val}` : `${currentPath}/${val}`] = { folders:[], files:[] };
             }
-        }
-        else if(modal1Mode === 'renameFolder') {
+        } else if(modal1Mode === 'renameFolder') {
             const old = modal1Target;
             if(dir.folders.includes(old) && !dir.folders.includes(val)) {
                 dir.folders = dir.folders.map(n => n === old ? val : n);
@@ -555,12 +700,16 @@
                 fileSystem[newPath] = fileSystem[oldPath];
                 delete fileSystem[oldPath];
             }
-        }
-        else if(modal1Mode === 'renameFile') {
+        } else if(modal1Mode === 'renameFile') {
             const old = modal1Target;
             dir.files = dir.files.map(f => f.name === old ? {name:val} : f);
+            
+            // 重命名真实文件对象
+            if(uploadedFiles[old]) {
+                uploadedFiles[val] = uploadedFiles[old];
+                delete uploadedFiles[old];
+            }
         }
-
         renderCurrentDir();
         closeModal1();
     }
@@ -574,6 +723,9 @@
         const dir = fileSystem[currentPath];
         dir.folders = dir.folders.filter(n => n !== name);
         const delPath = currentPath === '/' ? `/${name}` : `${currentPath}/${name}`;
+        
+        // 删除文件夹内所有文件
+        deleteAllFilesInPath(delPath);
         delete fileSystem[delPath];
         renderCurrentDir();
     }
@@ -581,7 +733,17 @@
     function deleteFile(name) {
         if(!confirm(`确定删除文件【${name}】？`)) return;
         fileSystem[currentPath].files = fileSystem[currentPath].files.filter(f => f.name !== name);
+        delete uploadedFiles[name];
         renderCurrentDir();
+    }
+
+    function deleteAllFilesInPath(path) {
+        const dir = fileSystem[path];
+        if(!dir) return;
+        dir.files.forEach(f => delete uploadedFiles[f.name]);
+        dir.folders.forEach(subFolder => {
+            deleteAllFilesInPath(path === '/' ? `/${subFolder}` : `${path}/${subFolder}`);
+        });
     }
 
     // ========== 上传 ==========
@@ -589,28 +751,36 @@
         const files = fileUpload.files;
         if(!files.length) return;
         const dir = fileSystem[currentPath];
-        for(let f of files) dir.files.push({name:f.name});
+        
+        for(let f of files) {
+            if(!dir.files.some(exist => exist.name === f.name)) {
+                dir.files.push({ name: f.name });
+                uploadedFiles[f.name] = f;
+            }
+        }
+        
         renderCurrentDir();
         fileUpload.value = '';
     }
 
-    // ========== 下载（前端模拟） ==========
-    function downloadFile(name) {
+    // ========== 下载 ==========
+    function downloadFile(fileName) {
+        const file = uploadedFiles[fileName];
+        if(!file) {
+            alert('文件不存在');
+            return;
+        }
+        const url = URL.createObjectURL(file);
         const a = document.createElement('a');
-        a.href = 'javascript:void(0)';
-        a.download = name;
+        a.href = url;
+        a.download = fileName;
         a.click();
-        alert(`开始下载：${name}`);
+        URL.revokeObjectURL(url);
     }
 
     // ========== 移动 ==========
     function openMoveFolderModal(name) {
         moveTarget = {type:'folder', name};
-        openMoveModal();
-    }
-
-    function openMoveFileModal(name) {
-        moveTarget = {type:'file', name};
         openMoveModal();
     }
 
@@ -637,12 +807,6 @@
                 srcDir.folders = srcDir.folders.filter(n => n !== name);
                 destDir.folders.push(name);
             }
-        } else {
-            const file = srcDir.files.find(f => f.name === name);
-            if(file && !destDir.files.some(f => f.name === name)) {
-                srcDir.files = srcDir.files.filter(f => f.name !== name);
-                destDir.files.push(file);
-            }
         }
         renderCurrentDir();
         closeModal2();
@@ -659,6 +823,7 @@
     // 点击空白关闭弹窗
     modal1.onclick = e => e.target === modal1 && closeModal1();
     modal2.onclick = e => e.target === modal2 && closeModal2();
+    previewModal.onclick = e => e.target === previewModal && closePreview();
     modal1Input.onkeydown = e => e.key === 'Enter' && confirmModal1();
 </script>
 
