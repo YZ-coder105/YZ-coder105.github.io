@@ -122,6 +122,7 @@
             display: flex;
             align-items: center;
             gap: 4px;
+            white-space: nowrap;
         }
 
         .btn-primary { background: #1d4ed8; color: white; }
@@ -156,10 +157,15 @@
             color: #1e40af;
         }
 
+        /* 表格容器 - 支持拖拽调整列宽 */
+        .table-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
         /* 表格头部 */
         .list-header {
-            display: grid;
-            grid-template-columns: 1fr 180px 120px 160px;
+            display: flex;
             padding: 10px 16px;
             font-weight: 500;
             color: #374151;
@@ -167,12 +173,40 @@
             border-radius: 6px;
             margin-bottom: 8px;
             font-size: 14px;
+            position: relative;
+        }
+
+        /* 列样式 + 拖拽手柄 */
+        .list-header div,
+        .item-row > div {
+            position: relative;
+            padding: 0 4px;
+        }
+
+        /* 固定列宽基础值 */
+        .col-name { flex: 1; min-width: 200px; }
+        .col-date { width: 180px; min-width: 120px; }
+        .col-type { width: 120px; min-width: 80px; }
+        .col-actions { width: 240px; min-width: 200px; }
+
+        /* 拖拽分割线 */
+        .resize-handle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 6px;
+            height: 100%;
+            cursor: col-resize;
+            background: transparent;
+            z-index: 10;
+        }
+        .resize-handle:hover {
+            background: #cbd5e1;
         }
 
         /* 统一列表行 */
         .item-row {
-            display: grid;
-            grid-template-columns: 1fr 180px 120px 160px;
+            display: flex;
             align-items: center;
             padding: 12px 16px;
             border-radius: 6px;
@@ -197,14 +231,18 @@
         .item-date { color: #6b7280; font-size: 13px; }
         .item-type { color: #4b5563; font-size: 13px; }
 
+        /* 操作列强制不换行，按钮永远一行 */
         .item-actions {
             display: flex;
             gap: 6px;
+            flex-shrink: 0;
+            white-space: nowrap;
         }
 
         .item-actions button {
             font-size: 12px;
             padding: 4px 8px;
+            flex-shrink: 0;
         }
 
         /* 拖拽样式 */
@@ -320,13 +358,16 @@
 
     <div class="content">
         <div class="path-nav" id="pathNav"></div>
-        <div class="list-header">
-            <div>名称</div>
-            <div>日期</div>
-            <div>类型</div>
-            <div>操作</div>
+        
+        <div class="table-wrapper">
+            <div class="list-header">
+                <div class="col-name">名称</div>
+                <div class="col-date">日期</div>
+                <div class="col-type">类型</div>
+                <div class="col-actions">操作</div>
+            </div>
+            <div id="listContainer"></div>
         </div>
-        <div id="listContainer"></div>
     </div>
 </div>
 
@@ -361,6 +402,7 @@ window.onload = () => {
     render();
     dom.fileUpload.onchange = uploadFiles;
     initDrag();
+    initColumnResize(); // 初始化列宽拖拽
 };
 
 // ================= 渲染 =================
@@ -374,9 +416,7 @@ function render() {
         const key = currentPath + name;
         const d = meta[key] || { create: new Date().toLocaleString(), update: new Date().toLocaleString() };
         const el = row({
-            name, icon: '📁', date: d.update, type: '文件夹',
-            btns: `
-                <button class="btn btn-light" onclick="rename('folder','${name}')">重命名</button>
+            name, icon: '📁', date: d.update, type: '文件夹 <button class="btn btn-light" onclick="rename('folder','${name}')">重命名</button>
                 <button class="btn btn-danger" onclick="del('folder','${name}')">删除</button>
             `
         });
@@ -410,10 +450,10 @@ function row({ name, icon, date, type, btns }) {
     const div = document.createElement('div');
     div.className = 'item-row';
     div.innerHTML = `
-        <div class="item-name"><span>${icon}</span> ${name}</div>
-        <div class="item-date">${date}</div>
-        <div class="item-type">${type}</div>
-        <div class="item-actions">${btns}</div>
+        <div class="item-name col-name"><span>${icon}</span> ${name}</div>
+        <div class="item-date col-date">${date}</div>
+        <div class="item-type col-type">${type}</div>
+        <div class="item-actions col-actions">${btns}</div>
     `;
     return div;
 }
@@ -507,6 +547,52 @@ function initDrag() {
     });
 }
 
+// ================= 列宽拖拽调整功能 =================
+function initColumnResize() {
+    const headerCells = document.querySelectorAll('.list-header div');
+    let resizing = false;
+    let currentCol;
+    let startX;
+    let startWidth;
+
+    // 添加拖拽手柄
+    headerCells.forEach((cell, index) => {
+        if (index !== headerCells.length - 1) {
+            const handle = document.createElement('div');
+            handle.className = 'resize-handle';
+            cell.appendChild(handle);
+
+            handle.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                resizing = true;
+                currentCol = cell;
+                startX = e.pageX;
+                startWidth = cell.offsetWidth;
+                document.body.style.cursor = 'col-resize';
+            });
+        }
+    });
+
+    // 拖拽中
+    document.addEventListener('mousemove', (e) => {
+        if (!resizing) return;
+        const diff = e.pageX - startX;
+        const newWidth = startWidth + diff;
+        if (newWidth > 60) {
+            currentCol.style.width = newWidth + 'px';
+            currentCol.style.flex = 'none';
+        }
+    });
+
+    // 结束拖拽
+    document.addEventListener('mouseup', () => {
+        if (resizing) {
+            resizing = false;
+            document.body.style.cursor = '';
+        }
+    });
+}
+
 // ================= 查看 / 下载 =================
 function view(name) {
     const f = uploadedFiles[name];
@@ -515,7 +601,8 @@ function view(name) {
     if (f.type.startsWith('image/')) {
         dom.previewBody.innerHTML = `<img src="${URL.createObjectURL(f)}" class="preview-img">`;
     } else if (f.type.startsWith('text/') || /\.(txt|md|json|js|css|html)$/.test(name)) {
-        new FileReader().onload = e => dom.previewBody.innerHTML = `<div class="preview-text">${e.target.result}</div>`;
+        const reader = new FileReader();
+        reader.onload = e => dom.previewBody.innerHTML = `<div class="preview-text">${e.target.result}</div>`;
         reader.readAsText(f);
     } else {
         dom.previewBody.innerHTML = '<div class="preview-none">暂不支持预览</div>';
@@ -633,7 +720,7 @@ function uploadFiles() {
 function searchItems() {
     const key = dom.searchInput.value.toLowerCase();
     document.querySelectorAll('.item-row').forEach(el => {
-        el.style.display = el.innerText.toLowerCase().includes(key) ? 'grid' : 'none';
+        el.style.display = el.innerText.toLowerCase().includes(key) ? 'flex' : 'none';
     });
 }
 </script>
