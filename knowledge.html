@@ -11,14 +11,12 @@
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif;
         }
-
         body {
             display: flex;
             height: 100vh;
             overflow: hidden;
             background: #f8f9fc;
         }
-
         .sidebar {
             width: 160px;
             background: #eef2ff;
@@ -26,299 +24,157 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            z-index: 999;
+            position: fixed; left:0; top:0; z-index:999;
         }
-
         .sidebar-header {
             padding: 16px 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #1e40af;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
+            display: flex; align-items:center; gap:8px;
+            color:#1e40af; font-size:18px; font-weight:600;
+            cursor:pointer; white-space:nowrap;
         }
-
         .sidebar-logo {
-            width: 24px;
-            height: 24px;
-            background: #1e40af;
-            border-radius: 6px;
-            display: grid;
-            place-items: center;
-            color: white;
-            font-weight: bold;
+            width:24px; height:24px; background:#1e40af;
+            border-radius:6px; display:grid; place-items:center;
+            color:white; font-weight:bold;
         }
-
         .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 16px;
-            font-size: 14px;
-            color: #334155;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-            border-radius: 6px;
-            border: 2px solid transparent;
+            display:flex; align-items:center; gap:10px;
+            padding:12px 16px; font-size:14px; color:#334155;
+            cursor:pointer; transition:all 0.2s ease;
+            white-space:nowrap; border-radius:6px;
+            border:2px solid transparent;
         }
-
         .menu-item:hover {
-            background: #dbeafe;
-            color: #1e40af;
-            font-weight: 500;
+            background:#dbeafe; color:#1e40af; font-weight:500;
         }
-
         .main {
-            flex: 1;
-            margin-left: 160px;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            background: white;
+            flex:1; margin-left:160px;
+            display:flex; flex-direction:column;
+            height:100vh; background:white;
         }
-
         .top-bar {
-            padding: 16px 30px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #fafbfc;
+            padding:16px 30px; border-bottom:1px solid #e2e8f0;
+            display:flex; justify-content:space-between; align-items:center;
+            background:#fafbfc;
         }
-
         .page-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1e40af;
+            font-size:20px; font-weight:600; color:#1e40af;
         }
-
         .tool-bar {
-            display: flex;
-            gap: 10px;
-            align-items: center;
+            display:flex; gap:10px; align-items:center;
         }
-
         .search-input {
-            padding: 6px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            outline: none;
-            width: 240px;
+            padding:6px 12px; border:1px solid #cbd5e1;
+            border-radius:6px; outline:none; width:240px;
         }
-
         .btn {
-            padding: 6px 14px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            white-space: nowrap;
+            padding:6px 14px; border-radius:6px; border:none;
+            cursor:pointer; font-size:14px; display:flex;
+            align-items:center; gap:4px; white-space:nowrap;
         }
-
-        .btn-primary { background: #1d4ed8; color: white; }
-        .btn-success { background: #16a34a; color: white; }
-        .btn-danger { background: #ef4444; color: white; }
-        .btn-warning { background: #f59e0b; color: white; }
-        .btn-light { background: #f1f5f9; color: #334155; }
+        .btn-primary { background:#1d4ed8; color:white; }
+        .btn-success { background:#16a34a; color:white; }
+        .btn-success { background:#16a34a; color:white; }
+        .btn-danger  { background:#ef4444; color:white; }
+        .btn-warning { background:#f59e0b; color:white; }
+        .btn-light   { background:#f1f5f9; color:#334155; }
 
         .content {
-            padding: 20px 30px;
-            overflow-y: auto;
-            flex: 1;
+            padding:20px 30px; overflow-y:auto; flex:1;
         }
-
         .path-nav {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 16px;
-            font-size: 14px;
-            color: #64748b;
+            display:flex; align-items:center; gap:6px;
+            margin-bottom:16px; font-size:14px; color:#64748b;
         }
-
         .path-item {
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 4px;
+            cursor:pointer; padding:4px 8px; border-radius:4px;
         }
-
         .path-item:hover {
-            background: #eef2ff;
-            color: #1e40af;
+            background:#eef2ff; color:#1e40af;
         }
 
-        /* 表格容器 - 支持拖拽调整列宽 */
         .table-wrapper {
-            position: relative;
-            width: 100%;
+            position:relative; width:100%;
         }
-
-        /* 表格头部 */
         .list-header {
-            display: flex;
-            padding: 10px 16px;
-            font-weight: 500;
-            color: #374151;
-            background: #f3f4f6;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            font-size: 14px;
-            position: relative;
+            display:flex; padding:10px 16px;
+            font-weight:500; color:#374151;
+            background:#f3f4f6; border-radius:6px;
+            margin-bottom:8px; font-size:14px; position:relative;
         }
-
-        /* 列样式 + 拖拽手柄 */
-        .list-header div,
-        .item-row > div {
-            position: relative;
-            padding: 0 4px;
+        .list-header div, .item-row > div {
+            position:relative; padding:0 4px;
         }
+        .col-name    { flex:1; min-width:200px; }
+        .col-date    { width:180px; min-width:120px; }
+        .col-type    { width:120px; min-width:80px; }
+        .col-actions { width:260px; min-width:220px; }
 
-        /* 固定列宽基础值 */
-        .col-name { flex: 1; min-width: 200px; }
-        .col-date { width: 180px; min-width: 120px; }
-        .col-type { width: 120px; min-width: 80px; }
-        .col-actions { width: 240px; min-width: 200px; }
-
-        /* 拖拽分割线 */
         .resize-handle {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 6px;
-            height: 100%;
-            cursor: col-resize;
-            background: transparent;
-            z-index: 10;
+            position:absolute; top:0; right:0;
+            width:6px; height:100%; cursor:col-resize;
+            background:transparent; z-index:10;
         }
-        .resize-handle:hover {
-            background: #cbd5e1;
-        }
+        .resize-handle:hover { background:#cbd5e1; }
 
-        /* 统一列表行 */
         .item-row {
-            display: flex;
-            align-items: center;
-            padding: 12px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            user-select: none;
-            font-size: 14px;
+            display:flex; align-items:center;
+            padding:12px 16px; border-radius:6px;
+            cursor:pointer; user-select:none; font-size:14px;
         }
+        .item-row:hover { background:#f9fafb; }
+        .item-name { display:flex; align-items:center; gap:10px; }
+        .item-date { color:#6b7280; font-size:13px; }
+        .item-type { color:#4b5563; font-size:13px; }
 
-        .item-row:hover {
-            background: #f9fafb;
-        }
-
-        .item-name {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .icon-folder { color: #f59e0b; font-size: 16px; }
-        .icon-file { color: #1d4ed8; font-size: 16px; }
-
-        .item-date { color: #6b7280; font-size: 13px; }
-        .item-type { color: #4b5563; font-size: 13px; }
-
-        /* 操作列强制不换行，按钮永远一行 */
         .item-actions {
-            display: flex;
-            gap: 6px;
-            flex-shrink: 0;
-            white-space: nowrap;
+            display:flex; gap:6px; flex-shrink:0; white-space:nowrap;
         }
-
         .item-actions button {
-            font-size: 12px;
-            padding: 4px 8px;
-            flex-shrink: 0;
+            font-size:12px; padding:4px 8px; flex-shrink:0;
         }
 
-        /* 拖拽样式 */
         .drag-over {
-            background: #dbeafe !important;
-            border: 2px dashed #1d4ed8;
+            background:#dbeafe !important; border:2px dashed #1d4ed8;
         }
 
-        /* 弹窗 */
         .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
+            position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.6); display:none; align-items:center;
+            justify-content:center; z-index:9999;
         }
-
         .modal-content {
-            background: white;
-            padding: 24px;
-            border-radius: 10px;
-            width: 700px;
-            max-height: 80vh;
-            overflow-y: auto;
+            background:white; padding:24px; border-radius:10px;
+            width:700px; max-height:80vh; overflow-y:auto;
         }
-
         .modal-header {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: #1e40af;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            font-size:16px; font-weight:600; margin-bottom:16px;
+            color:#1e40af; display:flex; justify-content:space-between;
+            align-items:center;
         }
-
         .close-btn {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
+            background:none; border:none; font-size:20px; cursor:pointer;
         }
-
         .modal-input {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            outline: none;
-            margin-bottom: 18px;
+            width:100%; padding:10px 12px; border:1px solid #cbd5e1;
+            border-radius:6px; outline:none; margin-bottom:18px;
         }
-
-        .preview-img { max-width: 100%; border-radius: 6px; }
-        .preview-text { background: #f9fafb; padding: 16px; border-radius: 6px; white-space: pre-wrap; line-height: 1.6; }
-        .preview-none { padding: 40px; text-align: center; color: #666; }
+        .preview-img { max-width:100%; border-radius:6px; }
+        .preview-text { background:#f9fafb; padding:16px; border-radius:6px; white-space:pre-wrap; line-height:1.6; }
+        .preview-none { padding:40px; text-align:center; color:#666; }
     </style>
 </head>
-
 <body>
 
-<!-- 左侧 -->
 <div class="sidebar">
-    <div class="sidebar-header" onclick="location.href='index.html'">
+    <div class="sidebar-header">
         <div class="sidebar-logo">🤖</div>万能小爱
     </div>
-    <div class="menu-item" onclick="location.href='index.html'">💬 AI提问</div>
+    <div class="menu-item">💬 AI提问</div>
     <div class="menu-item" style="background:#dbeafe;color:#1e40af;font-weight:500;">📚 知识库</div>
     <div class="menu-item">📊 PPT生成</div>
 </div>
 
-<!-- 重命名弹窗 -->
 <div class="modal" id="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -333,7 +189,6 @@
     </div>
 </div>
 
-<!-- 预览弹窗 -->
 <div class="modal" id="previewModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -344,7 +199,6 @@
     </div>
 </div>
 
-<!-- 主体 -->
 <div class="main">
     <div class="top-bar">
         <div class="page-title">📁 知识库管理</div>
@@ -353,12 +207,14 @@
             <button class="btn btn-primary" onclick="createFolder()">📂 新建文件夹</button>
             <button class="btn btn-success" onclick="document.getElementById('fileUpload').click()">📤 上传文件</button>
             <input type="file" id="fileUpload" multiple style="display:none;">
+            <button class="btn btn-light" onclick="exportBackup()">💾 导出备份</button>
+            <button class="btn btn-light" onclick="document.getElementById('importBackup').click()">📥 导入备份</button>
+            <input type="file" id="importBackup" accept=".json" style="display:none;">
         </div>
     </div>
 
     <div class="content">
         <div class="path-nav" id="pathNav"></div>
-        
         <div class="table-wrapper">
             <div class="list-header">
                 <div class="col-name">名称</div>
@@ -372,67 +228,85 @@
 </div>
 
 <script>
-// ================= 核心数据 =================
-let currentPath = '/';
-let pathStack = [{ name: '根目录', path: '/' }];
+const STORAGE_KEY = "xiaoi_kb_data";
+let currentPath = "/";
+let pathStack = [{ name:"根目录", path:"/" }];
 
-let fileSystem = {
-    '/': { folders: [], files: [] }
-};
-
-let meta = {}; // 存储创建/更新时间
-let uploadedFiles = {};
+let fileSystem = {};
+let meta = {};
+let storedFiles = {};
 let modalMode = '', targetName = '';
 let dragItem = null;
 
 const dom = {
-    modal: document.getElementById('modal'),
-    modalTitle: document.getElementById('modalTitle'),
-    modalInput: document.getElementById('modalInput'),
-    previewModal: document.getElementById('previewModal'),
-    previewTitle: document.getElementById('previewTitle'),
-    previewBody: document.getElementById('previewBody'),
-    fileUpload: document.getElementById('fileUpload'),
-    listContainer: document.getElementById('listContainer'),
-    pathNav: document.getElementById('pathNav'),
-    searchInput: document.getElementById('searchInput')
+    modal: document.getElementById("modal"),
+    modalTitle: document.getElementById("modalTitle"),
+    modalInput: document.getElementById("modalInput"),
+    previewModal: document.getElementById("previewModal"),
+    previewTitle: document.getElementById("previewTitle"),
+    previewBody: document.getElementById("previewBody"),
+    fileUpload: document.getElementById("fileUpload"),
+    importBackup: document.getElementById("importBackup"),
+    listContainer: document.getElementById("listContainer"),
+    pathNav: document.getElementById("pathNav"),
+    searchInput: document.getElementById("searchInput")
 };
 
 window.onload = () => {
+    loadFromStorage();
     render();
     dom.fileUpload.onchange = uploadFiles;
+    dom.importBackup.onchange = importBackupFile;
     initDrag();
-    initColumnResize(); // 初始化列宽拖拽
+    initColumnResize();
 };
 
-// ================= 渲染 =================
-function render() {
-    dom.listContainer.innerHTML = '';
-    renderPath();
-    const dir = fileSystem[currentPath] || { folders: [], files: [] };
+function saveToStorage() {
+    const data = { fileSystem, meta, storedFiles, currentPath, pathStack };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
 
-    // 文件夹
+function loadFromStorage() {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (data) {
+        const parsed = JSON.parse(data);
+        fileSystem = parsed.fileSystem || { "/": { folders:[], files:[] } };
+        meta = parsed.meta || {};
+        storedFiles = parsed.storedFiles || {};
+        currentPath = parsed.currentPath || "/";
+        pathStack = parsed.pathStack || [{ name:"根目录", path:"/" }];
+    } else {
+        fileSystem = { "/": { folders:[], files:[] } };
+    }
+}
+
+function render() {
+    dom.listContainer.innerHTML = "";
+    renderPath();
+    const dir = fileSystem[currentPath] || { folders:[], files:[] };
+
     dir.folders.forEach(name => {
         const key = currentPath + name;
-        const d = meta[key] || { create: new Date().toLocaleString(), update: new Date().toLocaleString() };
+        const d = meta[key] || { create:now(), update:now() };
         const el = row({
-            name, icon: '📁', date: d.update, type: '文件夹 <button class="btn btn-light" onclick="rename('folder','${name}')">重命名</button>
+            name, icon:"📁", date:d.update, type:"文件夹",
+            btns: `
+                <button class="btn btn-light" onclick="rename('folder','${name}')">重命名</button>
                 <button class="btn btn-danger" onclick="del('folder','${name}')">删除</button>
             `
         });
-        el.setAttribute('data-type', 'folder');
-        el.setAttribute('data-name', name);
-        el.onclick = (e) => { if (!e.target.closest('button')) enter(name); };
+        el.dataset.type = "folder";
+        el.dataset.name = name;
+        el.onclick = e => !e.target.closest("button") && enter(name);
         dom.listContainer.appendChild(el);
     });
 
-    // 文件
     dir.files.forEach(file => {
         const name = file.name;
         const key = currentPath + name;
-        const d = meta[key] || { create: new Date().toLocaleString(), update: new Date().toLocaleString() };
+        const d = meta[key] || { create:now(), update:now() };
         const el = row({
-            name, icon: '📄', date: d.update, type: getType(name),
+            name, icon:"📄", date:d.update, type:getType(name),
             btns: `
                 <button class="btn btn-primary" onclick="view('${name}')">查看</button>
                 <button class="btn btn-light" onclick="download('${name}')">下载</button>
@@ -440,17 +314,17 @@ function render() {
                 <button class="btn btn-danger" onclick="del('file','${name}')">删除</button>
             `
         });
-        el.setAttribute('data-type', 'file');
-        el.setAttribute('data-name', name);
+        el.dataset.type = "file";
+        el.dataset.name = name;
         dom.listContainer.appendChild(el);
     });
 }
 
 function row({ name, icon, date, type, btns }) {
-    const div = document.createElement('div');
-    div.className = 'item-row';
+    const div = document.createElement("div");
+    div.className = "item-row";
     div.innerHTML = `
-        <div class="item-name col-name"><span>${icon}</span> ${name}</div>
+        <div class="item-name col-name"><span>${icon}</span>${name}</div>
         <div class="item-date col-date">${date}</div>
         <div class="item-type col-type">${type}</div>
         <div class="item-actions col-actions">${btns}</div>
@@ -459,269 +333,268 @@ function row({ name, icon, date, type, btns }) {
 }
 
 function renderPath() {
-    dom.pathNav.innerHTML = '';
+    dom.pathNav.innerHTML = "";
     pathStack.forEach((item, i) => {
-        const a = document.createElement('span');
-        a.className = 'path-item';
+        const a = document.createElement("span");
+        a.className = "path-item";
         a.innerText = item.name;
-        a.onclick = () => { currentPath = item.path; pathStack = pathStack.slice(0, i + 1); render(); };
+        a.onclick = () => {
+            currentPath = item.path;
+            pathStack = pathStack.slice(0, i+1);
+            saveToStorage();
+            render();
+        };
         dom.pathNav.appendChild(a);
-        if (i < pathStack.length - 1) {
-            const s = document.createElement('span');
-            s.style.margin = '0 4px';
-            s.innerText = '/';
+        if (i < pathStack.length-1) {
+            const s = document.createElement("span");
+            s.innerText = "/";
             dom.pathNav.appendChild(s);
         }
     });
 }
 
-// ================= 文件类型 =================
+function now() {
+    return new Date().toLocaleString();
+}
+
 function getType(name) {
-    const ext = name.split('.').pop().toLowerCase();
+    const ext = name.split(".").pop().toLowerCase();
     const map = {
-        img: ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'],
-        text: ['txt', 'md', 'json', 'js', 'css', 'html', 'log'],
-        pdf: ['pdf'],
-        word: ['doc', 'docx'],
-        excel: ['xls', 'xlsx', 'csv'],
-        ppt: ['ppt', 'pptx'],
-        video: ['mp4', 'mov', 'avi', 'mkv'],
-        audio: ['mp3', 'wav', 'flac']
+        img:["png","jpg","jpeg","gif","bmp","webp"],
+        text:["txt","md","json","js","css","html","log"],
+        pdf:["pdf"], word:["doc","docx"],
+        excel:["xls","xlsx","csv"], ppt:["ppt","pptx"],
+        video:["mp4","mov","avi"], audio:["mp3","wav"]
     };
-    if (map.img.includes(ext)) return '图片';
-    if (map.text.includes(ext)) return '文本';
-    if (map.pdf.includes(ext)) return 'PDF';
-    if (map.word.includes(ext)) return 'Word';
-    if (map.excel.includes(ext)) return 'Excel';
-    if (map.ppt.includes(ext)) return 'PPT';
-    if (map.video.includes(ext)) return '视频';
-    if (map.audio.includes(ext)) return '音频';
-    return '文件';
+    if(map.img.includes(ext))return"图片";
+    if(map.text.includes(ext))return"文本";
+    if(map.pdf.includes(ext))return"PDF";
+    if(map.word.includes(ext))return"Word";
+    if(map.excel.includes(ext))return"Excel";
+    if(map.ppt.includes(ext))return"PPT";
+    if(map.video.includes(ext))return"视频";
+    if(map.audio.includes(ext))return"音频";
+    return"文件";
 }
 
-// ================= 拖拽 =================
-function initDrag() {
-    document.addEventListener('dragstart', e => {
-        const row = e.target.closest('.item-row');
-        if (!row) return;
-        dragItem = {
-            type: row.getAttribute('data-type'),
-            name: row.getAttribute('data-name')
-        };
-        e.dataTransfer.effectAllowed = 'move';
-    });
-
-    document.addEventListener('dragover', e => e.preventDefault());
-
-    document.addEventListener('drop', e => {
-        e.preventDefault();
-        const target = e.target.closest('.item-row');
-        if (!target || !dragItem) return;
-
-        const targetType = target.getAttribute('data-type');
-        const targetName = target.getAttribute('data-name');
-        if (targetType !== 'folder') return;
-
-        const srcDir = fileSystem[currentPath];
-        const dstPath = currentPath === '/' ? `/${targetName}` : `${currentPath}/${targetName}`;
-        const dstDir = fileSystem[dstPath] || (fileSystem[dstPath] = { folders: [], files: [] });
-
-        if (dragItem.type === 'folder') {
-            if (srcDir.folders.includes(dragItem.name)) {
-                srcDir.folders = srcDir.folders.filter(n => n !== dragItem.name);
-                if (!dstDir.folders.includes(dragItem.name)) dstDir.folders.push(dragItem.name);
-            }
-        } else {
-            const f = srcDir.files.find(x => x.name === dragItem.name);
-            if (f && !dstDir.files.some(x => x.name === dragItem.name)) {
-                srcDir.files = srcDir.files.filter(x => x.name !== dragItem.name);
-                dstDir.files.push(f);
-                if (uploadedFiles[dragItem.name]) {
-                    uploadedFiles[dstPath + dragItem.name] = uploadedFiles[dragItem.name];
-                    delete uploadedFiles[dragItem.name];
-                }
-            }
-        }
-        render();
-        dragItem = null;
-    });
-}
-
-// ================= 列宽拖拽调整功能 =================
 function initColumnResize() {
-    const headerCells = document.querySelectorAll('.list-header div');
-    let resizing = false;
-    let currentCol;
-    let startX;
-    let startWidth;
-
-    // 添加拖拽手柄
-    headerCells.forEach((cell, index) => {
-        if (index !== headerCells.length - 1) {
-            const handle = document.createElement('div');
-            handle.className = 'resize-handle';
-            cell.appendChild(handle);
-
-            handle.addEventListener('mousedown', (e) => {
-                e.preventDefault();
-                resizing = true;
-                currentCol = cell;
-                startX = e.pageX;
-                startWidth = cell.offsetWidth;
-                document.body.style.cursor = 'col-resize';
-            });
+    const cols = document.querySelectorAll(".list-header div");
+    let resizing=false, cur, sx, sw;
+    cols.forEach((c,i)=>{
+        if(i!==cols.length-1){
+            const h=document.createElement("div");
+            h.className="resize-handle"; c.appendChild(h);
+            h.onmousedown=e=>{
+                e.preventDefault(); resizing=true;
+                cur=c; sx=e.pageX; sw=c.offsetWidth;
+                document.body.style.cursor="col-resize";
+            };
         }
     });
+    document.onmousemove=e=>{
+        if(!resizing)return;
+        const w=sw+e.pageX-sx;
+        if(w>60){cur.style.width=w+"px"; cur.style.flex="none";}
+    };
+    document.onmouseup=()=>{
+        resizing=false; document.body.style.cursor="";
+    };
+}
 
-    // 拖拽中
-    document.addEventListener('mousemove', (e) => {
-        if (!resizing) return;
-        const diff = e.pageX - startX;
-        const newWidth = startWidth + diff;
-        if (newWidth > 60) {
-            currentCol.style.width = newWidth + 'px';
-            currentCol.style.flex = 'none';
-        }
+function initDrag(){
+    document.addEventListener("dragstart",e=>{
+        const r=e.target.closest(".item-row");
+        if(!r)return;
+        dragItem={type:r.dataset.type,name:r.dataset.name};
     });
-
-    // 结束拖拽
-    document.addEventListener('mouseup', () => {
-        if (resizing) {
-            resizing = false;
-            document.body.style.cursor = '';
+    document.addEventListener("dragover",e=>e.preventDefault());
+    document.addEventListener("drop",e=>{
+        e.preventDefault();
+        const t=e.target.closest(".item-row");
+        if(!t||!dragItem||t.dataset.type!=="folder")return;
+        const dstName=t.dataset.name;
+        const dstPath=currentPath==="/"?`/${dstName}`:`${currentPath}/${dstName}`;
+        const src=fileSystem[currentPath];
+        const dst=fileSystem[dstPath]||(fileSystem[dstPath]={folders:[],files:[]});
+        if(dragItem.type==="folder"){
+            if(src.folders.includes(dragItem.name)){
+                src.folders=src.folders.filter(n=>n!==dragItem.name);
+                if(!dst.folders.includes(dragItem.name))dst.folders.push(dragItem.name);
+            }
+        }else{
+            const f=src.files.find(x=>x.name===dragItem.name);
+            if(f&&!dst.files.some(x=>x.name===dragItem.name)){
+                src.files=src.files.filter(x=>x.name!==dragItem.name);
+                dst.files.push(f);
+            }
         }
+        saveToStorage();
+        render();
+        dragItem=null;
     });
 }
 
-// ================= 查看 / 下载 =================
-function view(name) {
-    const f = uploadedFiles[name];
-    if (!f) { dom.previewBody.innerHTML = '<div class="preview-none">文件不存在</div>'; dom.previewModal.style.display = 'flex'; return; }
-    dom.previewTitle.innerText = name;
-    if (f.type.startsWith('image/')) {
-        dom.previewBody.innerHTML = `<img src="${URL.createObjectURL(f)}" class="preview-img">`;
-    } else if (f.type.startsWith('text/') || /\.(txt|md|json|js|css|html)$/.test(name)) {
-        const reader = new FileReader();
-        reader.onload = e => dom.previewBody.innerHTML = `<div class="preview-text">${e.target.result}</div>`;
-        reader.readAsText(f);
-    } else {
-        dom.previewBody.innerHTML = '<div class="preview-none">暂不支持预览</div>';
+function view(name){
+    const f=storedFiles[name];
+    if(!f){dom.previewBody.innerHTML="<div class='preview-none'>文件不存在</div>";dom.previewModal.style.display="flex";return;}
+    dom.previewTitle.innerText=name;
+    if(f.type.startsWith("image/")){
+        dom.previewBody.innerHTML=`<img src="${f.base64}" class="preview-img">`;
+    }else if(f.type.startsWith("text/")||/\.(txt|md|json|js|css|html)$/.test(name)){
+        dom.previewBody.innerHTML=`<div class="preview-text">${atob(f.base64.split(",")[1]||"")}</div>`;
+    }else{
+        dom.previewBody.innerHTML="<div class='preview-none'>暂不支持预览</div>";
     }
-    dom.previewModal.style.display = 'flex';
+    dom.previewModal.style.display="flex";
 }
+function closePreview(){dom.previewModal.style.display="none";dom.previewBody.innerHTML="";}
 
-function closePreview() { dom.previewModal.style.display = 'none'; dom.previewBody.innerHTML = ''; }
-
-function download(name) {
-    const f = uploadedFiles[name];
-    if (!f) return alert('文件不存在');
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(f);
-    a.download = name;
+function download(name){
+    const f=storedFiles[name];
+    if(!f)return alert("文件不存在");
+    const a=document.createElement("a");
+    a.href=f.base64;
+    a.download=name;
     a.click();
 }
 
-// ================= 新建 / 重命名 / 删除 =================
-function createFolder() {
+function createFolder(){
     modalMode = 'createFolder';
-    dom.modalTitle.innerText = '新建文件夹';
-    dom.modalInput.value = '';
-    dom.modal.style.display = 'flex';
+    dom.modalTitle.innerText = "新建文件夹";
+    dom.modalInput.value = "";
+    dom.modal.style.display = "flex";
 }
-
-function rename(type, name) {
+function rename(type,name){
     modalMode = type === 'folder' ? 'renameFolder' : 'renameFile';
     targetName = name;
-    dom.modalTitle.innerText = '重命名';
+    dom.modalTitle.innerText = "重命名";
     dom.modalInput.value = name;
-    dom.modal.style.display = 'flex';
+    dom.modal.style.display = "flex";
 }
+function closeModal(){dom.modal.style.display="none";}
 
-function confirmModal() {
+function confirmModal(){
     const val = dom.modalInput.value.trim();
-    if (!val) return closeModal();
+    if(!val) return closeModal();
     const dir = fileSystem[currentPath];
-    const now = new Date().toLocaleString();
+    const t = now();
 
-    if (modalMode === 'createFolder') {
-        if (!dir.folders.includes(val)) {
+    if(modalMode === "createFolder"){
+        if(!dir.folders.includes(val)){
             dir.folders.push(val);
-            meta[currentPath + val] = { create: now, update: now };
+            meta[currentPath + val] = { create:t, update:t };
         }
-    } else if (modalMode === 'renameFolder') {
-        if (dir.folders.includes(targetName) && !dir.folders.includes(val)) {
+    }else if(modalMode === "renameFolder"){
+        if(dir.folders.includes(targetName) && !dir.folders.includes(val)){
             dir.folders = dir.folders.map(n => n === targetName ? val : n);
-            meta[currentPath + val] = { create: meta[currentPath + targetName]?.create || now, update: now };
+            meta[currentPath + val] = meta[currentPath + targetName] || { create:t, update:t };
             delete meta[currentPath + targetName];
         }
-    } else if (modalMode === 'renameFile') {
-        dir.files = dir.files.map(f => f.name === targetName ? { name: val } : f);
-        if (uploadedFiles[targetName]) {
-            uploadedFiles[val] = uploadedFiles[targetName];
-            delete uploadedFiles[targetName];
+    }else if(modalMode === "renameFile"){
+        dir.files = dir.files.map(f => f.name === targetName ? { name:val } : f);
+        if(storedFiles[targetName]){
+            storedFiles[val] = storedFiles[targetName];
+            delete storedFiles[targetName];
         }
-        meta[currentPath + val] = { create: meta[currentPath + targetName]?.create || now, update: now };
+        meta[currentPath + val] = meta[currentPath + targetName] || { create:t, update:t };
         delete meta[currentPath + targetName];
     }
+    saveToStorage();
     render();
     closeModal();
 }
 
-function del(type, name) {
-    if (!confirm(`确定删除【${name}】？`)) return;
+function del(type,name){
+    if(!confirm(`确定删除【${name}】？`)) return;
     const dir = fileSystem[currentPath];
-    if (type === 'folder') {
+    if(type === "folder"){
         dir.folders = dir.folders.filter(n => n !== name);
         deleteDeep(currentPath + name);
-    } else {
+    }else{
         dir.files = dir.files.filter(f => f.name !== name);
-        delete uploadedFiles[name];
+        delete storedFiles[name];
         delete meta[currentPath + name];
     }
+    saveToStorage();
     render();
 }
 
-function deleteDeep(path) {
+function deleteDeep(path){
     const d = fileSystem[path];
-    if (!d) return;
-    d.files.forEach(f => { delete uploadedFiles[f.name]; delete meta[path + f.name]; });
-    d.folders.forEach(sub => deleteDeep(path + '/' + sub));
+    if(!d) return;
+    d.files.forEach(f => { delete storedFiles[f.name]; delete meta[path + f.name]; });
+    d.folders.forEach(sub => deleteDeep(path + "/" + sub));
     delete fileSystem[path];
 }
 
-function closeModal() { dom.modal.style.display = 'none'; }
-
-// ================= 进入文件夹 =================
-function enter(name) {
-    const newPath = currentPath === '/' ? `/${name}` : `${currentPath}/${name}`;
-    if (!fileSystem[newPath]) fileSystem[newPath] = { folders: [], files: [] };
-    currentPath = newPath;
-    pathStack.push({ name, path: newPath });
+function enter(name){
+    const np = currentPath === "/" ? `/${name}` : `${currentPath}/${name}`;
+    if(!fileSystem[np]) fileSystem[np] = { folders:[], files:[] };
+    currentPath = np;
+    pathStack.push({ name, path:np });
+    saveToStorage();
     render();
 }
 
-// ================= 上传 =================
-function uploadFiles() {
+function uploadFiles(){
     const files = dom.fileUpload.files;
     const dir = fileSystem[currentPath];
-    const now = new Date().toLocaleString();
-    for (let f of files) {
-        if (!dir.files.some(x => x.name === f.name)) {
-            dir.files.push({ name: f.name });
-            uploadedFiles[f.name] = f;
-            meta[currentPath + f.name] = { create: now, update: now };
-        }
+    const t = now();
+    for(const f of files){
+        if(dir.files.some(x => x.name === f.name)) continue;
+        dir.files.push({ name:f.name });
+        const reader = new FileReader();
+        reader.onload = e => {
+            storedFiles[f.name] = {
+                base64: e.target.result,
+                type: f.type,
+                name: f.name
+            };
+            meta[currentPath + f.name] = { create:t, update:t };
+            saveToStorage();
+            render();
+        };
+        reader.readAsDataURL(f);
     }
-    render();
-    dom.fileUpload.value = '';
+    dom.fileUpload.value = "";
 }
 
-// ================= 搜索 =================
-function searchItems() {
-    const key = dom.searchInput.value.toLowerCase();
-    document.querySelectorAll('.item-row').forEach(el => {
-        el.style.display = el.innerText.toLowerCase().includes(key) ? 'flex' : 'none';
+function searchItems(){
+    const k = dom.searchInput.value.toLowerCase();
+    document.querySelectorAll(".item-row").forEach(el => {
+        el.style.display = el.innerText.toLowerCase().includes(k) ? "flex" : "none";
     });
+}
+
+function exportBackup(){
+    const data = localStorage.getItem(STORAGE_KEY);
+    const blob = new Blob([data], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `小爱知识库备份_${new Date().getTime()}.json`;
+    a.click();
+}
+
+function importBackupFile(e){
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+        try{
+            const d = JSON.parse(ev.target.result);
+            fileSystem = d.fileSystem;
+            meta = d.meta;
+            storedFiles = d.storedFiles;
+            currentPath = d.currentPath || "/";
+            pathStack = d.pathStack || [{ name:"根目录", path:"/" }];
+            saveToStorage();
+            alert("导入成功！即将刷新");
+            location.reload();
+        }catch(err){
+            alert("备份文件格式错误");
+        }
+    };
+    reader.readAsText(file);
 }
 </script>
 </body>
