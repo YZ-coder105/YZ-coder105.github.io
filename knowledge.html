@@ -530,31 +530,38 @@ function enter(name){
     render();
 }
 
-function uploadFiles(){
+// 修复上传文件核心逻辑
+function uploadFiles() {
     const files = dom.fileUpload.files;
+    if (!files.length) return;
     const dir = fileSystem[currentPath];
     const t = now();
-    
-    for(let i=0; i<files.length; i++){
-        const f = files[i];
-        if(dir.files.some(x => x.name === f.name)) continue;
-        
-        dir.files.push({ name:f.name });
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        // 跳过同名文件
+        if (dir.files.some(x => x.name === file.name)) continue;
+
+        // 先添加文件记录
+        dir.files.push({ name: file.name });
         const reader = new FileReader();
-        reader.onload = (function(file, time){
-            return function(e){
-                storedFiles[file.name] = {
-                    base64: e.target.result,
-                    type: file.type,
-                    name: file.name
-                };
-                meta[currentPath + file.name] = { create:time, update:time };
-                saveToStorage();
-                render();
+
+        // 绑定读取完成事件
+        reader.onload = (e) => {
+            storedFiles[file.name] = {
+                base64: e.target.result,
+                type: file.type,
+                name: file.name
             };
-        })(f, t);
-        reader.readAsDataURL(f);
+            meta[currentPath + file.name] = { create: t, update: t };
+            saveToStorage();
+            render(); // 读取完成后刷新列表
+        };
+
+        // 读取文件为Base64
+        reader.readAsDataURL(file);
     }
+    // 清空文件选择框，允许重复上传
     dom.fileUpload.value = "";
 }
 
