@@ -74,7 +74,6 @@
         }
         .btn-primary { background:#1d4ed8; color:white; }
         .btn-success { background:#16a34a; color:white; }
-        .btn-success { background:#16a34a; color:white; }
         .btn-danger  { background:#ef4444; color:white; }
         .btn-warning { background:#f59e0b; color:white; }
         .btn-light   { background:#f1f5f9; color:#334155; }
@@ -203,13 +202,11 @@
     <div class="top-bar">
         <div class="page-title">📁 知识库管理</div>
         <div class="tool-bar">
-            <input type="text" class="search-input" id="searchInput" placeholder="搜索文件/文件夹..." oninput="searchItems()">
+            <input type="text" class="search-input" id="searchInput" placeholder="搜索文件/文件夹...">
+            <button class="btn btn-light" onclick="searchItems()">🔍 搜索</button>
             <button class="btn btn-primary" onclick="createFolder()">📂 新建文件夹</button>
             <button class="btn btn-success" onclick="document.getElementById('fileUpload').click()">📤 上传文件</button>
             <input type="file" id="fileUpload" multiple style="display:none;">
-            <button class="btn btn-light" onclick="exportBackup()">💾 导出备份</button>
-            <button class="btn btn-light" onclick="document.getElementById('importBackup').click()">📥 导入备份</button>
-            <input type="file" id="importBackup" accept=".json" style="display:none;">
         </div>
     </div>
 
@@ -246,7 +243,6 @@ const dom = {
     previewTitle: document.getElementById("previewTitle"),
     previewBody: document.getElementById("previewBody"),
     fileUpload: document.getElementById("fileUpload"),
-    importBackup: document.getElementById("importBackup"),
     listContainer: document.getElementById("listContainer"),
     pathNav: document.getElementById("pathNav"),
     searchInput: document.getElementById("searchInput")
@@ -256,7 +252,6 @@ window.onload = () => {
     loadFromStorage();
     render();
     dom.fileUpload.onchange = uploadFiles;
-    dom.importBackup.onchange = importBackupFile;
     initDrag();
     initColumnResize();
 };
@@ -560,41 +555,10 @@ function uploadFiles(){
 }
 
 function searchItems(){
-    const k = dom.searchInput.value.toLowerCase();
+    const k = dom.searchInput.value.toLowerCase().trim();
     document.querySelectorAll(".item-row").forEach(el => {
         el.style.display = el.innerText.toLowerCase().includes(k) ? "flex" : "none";
     });
-}
-
-function exportBackup(){
-    const data = localStorage.getItem(STORAGE_KEY);
-    const blob = new Blob([data], {type:"application/json"});
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `小爱知识库备份_${new Date().getTime()}.json`;
-    a.click();
-}
-
-function importBackupFile(e){
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-        try{
-            const d = JSON.parse(ev.target.result);
-            fileSystem = d.fileSystem;
-            meta = d.meta;
-            storedFiles = d.storedFiles;
-            currentPath = d.currentPath || "/";
-            pathStack = d.pathStack || [{ name:"根目录", path:"/" }];
-            saveToStorage();
-            alert("导入成功！即将刷新");
-            location.reload();
-        }catch(err){
-            alert("备份文件格式错误");
-        }
-    };
-    reader.readAsText(file);
 }
 </script>
 </body>
