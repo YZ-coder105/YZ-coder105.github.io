@@ -15,7 +15,7 @@
             display: flex;
             height: 100vh;
             overflow: hidden;
-            background: #f8f9fc;
+            background: #f8f8f8;
         }
         .sidebar {
             width: 160px;
@@ -75,7 +75,6 @@
         .btn-primary { background:#1d4ed8; color:white; }
         .btn-success { background:#16a34a; color:white; }
         .btn-danger  { background:#ef4444; color:white; }
-        .btn-warning { background:#f59e0b; color:white; }
         .btn-light   { background:#f1f5f9; color:#334155; }
 
         .content {
@@ -131,10 +130,6 @@
         }
         .item-actions button {
             font-size:12px; padding:4px 8px; flex-shrink:0;
-        }
-
-        .drag-over {
-            background:#dbeafe !important; border:2px dashed #1d4ed8;
         }
 
         .modal {
@@ -290,9 +285,13 @@ function render() {
                 <button class="btn btn-danger" onclick="del('folder','${name}')">删除</button>
             `
         });
-        el.dataset.type = "folder";
-        el.dataset.name = name;
-        el.onclick = e => !e.target.closest("button") && enter(name);
+        el.setAttribute("data-type", "folder");
+        el.setAttribute("data-name", name);
+        el.onclick = function(e) {
+            if (!e.target.closest("button")) {
+                enter(name);
+            }
+        };
         dom.listContainer.appendChild(el);
     });
 
@@ -309,8 +308,8 @@ function render() {
                 <button class="btn btn-danger" onclick="del('file','${name}')">删除</button>
             `
         });
-        el.dataset.type = "file";
-        el.dataset.name = name;
+        el.setAttribute("data-type", "file");
+        el.setAttribute("data-name", name);
         dom.listContainer.appendChild(el);
     });
 }
@@ -400,14 +399,14 @@ function initDrag(){
     document.addEventListener("dragstart",e=>{
         const r=e.target.closest(".item-row");
         if(!r)return;
-        dragItem={type:r.dataset.type,name:r.dataset.name};
+        dragItem={type:r.getAttribute("data-type"), name:r.getAttribute("data-name")};
     });
     document.addEventListener("dragover",e=>e.preventDefault());
     document.addEventListener("drop",e=>{
         e.preventDefault();
         const t=e.target.closest(".item-row");
-        if(!t||!dragItem||t.dataset.type!=="folder")return;
-        const dstName=t.dataset.name;
+        if(!t||!dragItem||t.getAttribute("data-type")!=="folder")return;
+        const dstName=t.getAttribute("data-name");
         const dstPath=currentPath==="/"?`/${dstName}`:`${currentPath}/${dstName}`;
         const src=fileSystem[currentPath];
         const dst=fileSystem[dstPath]||(fileSystem[dstPath]={folders:[],files:[]});
@@ -535,20 +534,25 @@ function uploadFiles(){
     const files = dom.fileUpload.files;
     const dir = fileSystem[currentPath];
     const t = now();
-    for(const f of files){
+    
+    for(let i=0; i<files.length; i++){
+        const f = files[i];
         if(dir.files.some(x => x.name === f.name)) continue;
+        
         dir.files.push({ name:f.name });
         const reader = new FileReader();
-        reader.onload = e => {
-            storedFiles[f.name] = {
-                base64: e.target.result,
-                type: f.type,
-                name: f.name
+        reader.onload = (function(file, time){
+            return function(e){
+                storedFiles[file.name] = {
+                    base64: e.target.result,
+                    type: file.type,
+                    name: file.name
+                };
+                meta[currentPath + file.name] = { create:time, update:time };
+                saveToStorage();
+                render();
             };
-            meta[currentPath + f.name] = { create:t, update:t };
-            saveToStorage();
-            render();
-        };
+        })(f, t);
         reader.readAsDataURL(f);
     }
     dom.fileUpload.value = "";
