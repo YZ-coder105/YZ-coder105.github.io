@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>万能小爱</title>
+    <title>知识库 - 万能小爱</title>
     <style>
         * {
             margin: 0;
@@ -11,14 +11,12 @@
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif;
         }
-
         body {
             display: flex;
             height: 100vh;
             overflow: hidden;
-            background: #f8f9fc;
+            background: #f8f8f8;
         }
-
         .sidebar {
             width: 160px;
             background: #eef2ff;
@@ -26,424 +24,553 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            z-index: 999;
+            position: fixed; left:0; top:0; z-index:999;
         }
-
         .sidebar-header {
             padding: 16px 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #1e40af;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
+            display: flex; align-items:center; gap:8px;
+            color:#1e40af; font-size:18px; font-weight:600;
+            cursor:pointer; white-space:nowrap;
         }
-
         .sidebar-logo {
-            width: 24px;
-            height: 24px;
-            background: #1e40af;
-            border-radius: 6px;
-            display: grid;
-            place-items: center;
-            color: white;
-            font-weight: bold;
+            width:24px; height:24px; background:#1e40af;
+            border-radius:6px; display:grid; place-items:center;
+            color:white; font-weight:bold;
         }
-
-        .sidebar-menu {
-            flex: 1;
-            padding: 8px 0;
-        }
-
         .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 16px;
-            font-size: 14px;
-            color: #334155;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-            border-radius: 6px;
-            border: 2px solid transparent;
+            display:flex; align-items:center; gap:10px;
+            padding:12px 16px; font-size:14px; color:#334155;
+            cursor:pointer; transition:all 0.2s ease;
+            white-space:nowrap; border-radius:6px;
+            border:2px solid transparent;
         }
-
         .menu-item:hover {
-            background: #dbeafe;
-            color: #1e40af;
-            font-weight: 500;
-            border: 2px solid #1d4ed8;
-            box-shadow: 0 0 8px #3b82f6;
+            background:#dbeafe; color:#1e40af; font-weight:500;
         }
-
-        .sidebar-footer {
-            padding: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .footer-btn {
-            padding: 10px;
-            font-size: 13px;
-            color: #1e40af;
-            background: #e0e7ff;
-            border: 2px solid transparent;
-            border-radius: 6px;
-            cursor: pointer;
-            text-align: left;
-            white-space: nowrap;
-            transition: all 0.2s ease;
-        }
-
-        .footer-btn:hover {
-            border: 2px solid #1d4ed8;
-            box-shadow: 0 0 8px #3b82f6;
-            background: #dbeafe;
-            font-weight: 500;
-        }
-
-        .login-btn {
-            background: #4f46e5;
-            color: white;
-            padding: 12px;
-            font-weight: 500;
-            text-align: center;
-            white-space: nowrap;
-        }
-
         .main {
-            flex: 1;
-            margin-left: 160px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            height: 100vh;
+            flex:1; margin-left:160px;
+            display:flex; flex-direction:column;
+            height:100vh; background:white;
         }
-
-        .top-banner {
-            background: #e9d5ff;
-            color: #4c1d95;
-            padding: 10px;
-            text-align: center;
-            font-size: 14px;
-            flex-shrink: 0;
+        .top-bar {
+            padding:16px 30px; border-bottom:1px solid #e2e8f0;
+            display:flex; justify-content:space-between; align-items:center;
+            background:#fafbfc;
         }
-
-        .chat-container {
-            flex: 1;
-            padding: 20px;
-            padding-bottom: 180px;
-            overflow-y: auto;
-            background: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .page-title {
+            font-size:20px; font-weight:600; color:#1e40af;
         }
-
-        .chat-history {
-            width: 60%;
-            max-width: 900px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+        .tool-bar {
+            display:flex; gap:10px; align-items:center;
         }
-
-        .chat-item {
-            padding: 14px 16px;
-            border-radius: 10px;
-            font-size: 14px;
-            line-height: 1.6;
-            white-space: pre-wrap;
-        }
-
-        .user-msg {
-            background: #dbeafe;
-            color: #1e3a8a;
-            align-self: flex-end;
-            max-width: 85%;
-        }
-
-        .bot-msg {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            align-self: flex-start;
-            max-width: 85%;
-        }
-
-        /* 🔥 完美布局：搜索框紧贴左侧栏，无空隙 */
-        .search-container {
-            background: #f8f9fc;
-            padding: 20px 0;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0;
-        }
-
-        .search-box {
-            width: 60%;
-            max-width: 900px;
-            border: 2px solid #93c5fd;
-            border-radius: 10px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            background: #fff;
-        }
-
-        .search-box:hover {
-            border: 2px solid #1d4ed8;
-            box-shadow: 0 0 10px #3b82f6;
-        }
-
         .search-input {
-            border: none;
-            outline: none;
-            font-size: 15px;
-            resize: none;
-            min-height: 60px;
+            padding:6px 12px; border:1px solid #cbd5e1;
+            border-radius:6px; outline:none; width:240px;
+        }
+        .btn {
+            padding:6px 14px; border-radius:6px; border:none;
+            cursor:pointer; font-size:14px; display:flex;
+            align-items:center; gap:4px; white-space:nowrap;
+        }
+        .btn-primary { background:#1d4ed8; color:white; }
+        .btn-success { background:#16a34a; color:white; }
+        .btn-danger  { background:#ef4444; color:white; }
+        .btn-light   { background:#f1f5f9; color:#334155; }
+
+        .content {
+            padding:20px 30px; overflow-y:auto; flex:1;
+        }
+        .path-nav {
+            display:flex; align-items:center; gap:6px;
+            margin-bottom:16px; font-size:14px; color:#64748b;
+        }
+        .path-item {
+            cursor:pointer; padding:4px 8px; border-radius:4px;
+        }
+        .path-item:hover {
+            background:#eef2ff; color:#1e40af;
         }
 
-        .search-tools {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .table-wrapper {
+            position:relative; width:100%;
+        }
+        .list-header {
+            display:flex; padding:10px 16px;
+            font-weight:500; color:#374151;
+            background:#f3f4f6; border-radius:6px;
+            margin-bottom:8px; font-size:14px; position:relative;
+        }
+        .list-header div, .item-row > div {
+            position:relative; padding:0 4px;
+        }
+        .col-name    { flex:1; min-width:200px; }
+        .col-date    { width:180px; min-width:120px; }
+        .col-type    { width:120px; min-width:80px; }
+        .col-actions { width:260px; min-width:220px; }
+
+        .resize-handle {
+            position:absolute; top:0; right:0;
+            width:6px; height:100%; cursor:col-resize;
+            background:transparent; z-index:10;
+        }
+        .resize-handle:hover { background:#cbd5e1; }
+
+        .item-row {
+            display:flex; align-items:center;
+            padding:12px 16px; border-radius:6px;
+            cursor:pointer; user-select:none; font-size:14px;
+        }
+        .item-row:hover { background:#f9fafb; }
+        .item-name { display:flex; align-items:center; gap:10px; }
+        .item-date { color:#6b7280; font-size:13px; }
+        .item-type { color:#4b5563; font-size:13px; }
+
+        .item-actions {
+            display:flex; gap:6px; flex-shrink:0; white-space:nowrap;
+        }
+        .item-actions button {
+            font-size:12px; padding:4px 8px; flex-shrink:0;
         }
 
-        .tools-left {
-            display: flex;
-            gap: 12px;
-            color: #64748b;
-            position: relative;
+        .modal {
+            position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.6); display:none; align-items:center;
+            justify-content:center; z-index:9999;
         }
-
-        .search-type-icon {
-            cursor: pointer;
-            padding: 2px 6px;
-            border-radius: 4px;
+        .modal-content {
+            background:white; padding:24px; border-radius:10px;
+            width:700px; max-height:80vh; overflow-y:auto;
         }
-
-        .search-type-icon:hover {
-            background: #eef2ff;
+        .modal-header {
+            font-size:16px; font-weight:600; margin-bottom:16px;
+            color:#1e40af; display:flex; justify-content:space-between;
+            align-items:center;
         }
-
-        .search-type-menu {
-            position: absolute;
-            top: 24px;
-            left: 0;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 10;
-            width: 130px;
-            display: none;
+        .close-btn {
+            background:none; border:none; font-size:20px; cursor:pointer;
         }
-
-        .search-type-item {
-            padding: 8px 12px;
-            font-size: 13px;
-            cursor: pointer;
+        .modal-input {
+            width:100%; padding:10px 12px; border:1px solid #cbd5e1;
+            border-radius:6px; outline:none; margin-bottom:18px;
         }
-
-        .search-type-item:hover {
-            background: #eef2ff;
-            color: #1e40af;
-        }
-
-        .tools-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #64748b;
-        }
-
-        .model-select {
-            padding: 4px 8px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            outline: none;
-            font-size: 13px;
-            background: #fff;
-            cursor: pointer;
-        }
-
-        .new-chat-btn {
-            background: #f1f5f9;
-            color: #334155;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            padding: 6px 10px;
-            cursor: pointer;
-        }
-
-        .send-btn {
-            background: #1d4ed8;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 6px 12px;
-            cursor: pointer;
-        }
-
-        .cards {
-            display: none;
-        }
+        .preview-img { max-width:100%; border-radius:6px; }
+        .preview-text { background:#f9fafb; padding:16px; border-radius:6px; white-space:pre-wrap; line-height:1.6; }
+        .preview-none { padding:40px; text-align:center; color:#666; }
     </style>
 </head>
-
 <body>
-    <div class="sidebar">
-        <div class="sidebar-header" onclick="location.href='index.html'">
-            <div class="sidebar-logo">🤖</div>万能小爱
+
+<div class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-logo">🤖</div>万能小爱
+    </div>
+    <div class="menu-item">💬 AI提问</div>
+    <div class="menu-item" style="background:#dbeafe;color:#1e40af;font-weight:500;">📚 知识库</div>
+    <div class="menu-item">📊 PPT生成</div>
+</div>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div id="modalTitle">标题</div>
+            <button class="close-btn" onclick="closeModal()">×</button>
         </div>
-        <div class="sidebar-menu">
-            <div class="menu-item">💬 AI提问</div>
-            <div class="menu-item" onclick="location.href='knowledge.html'">📚 知识库</div>
-            <div class="menu-item">📊 PPT生成</div>
+        <input type="text" class="modal-input" id="modalInput" placeholder="请输入名称">
+        <div style="display:flex;justify-content:flex-end;gap:10px;">
+            <button class="btn btn-light" onclick="closeModal()">取消</button>
+            <button class="btn btn-primary" onclick="confirmModal()">确定</button>
         </div>
-        <div class="sidebar-footer">
-            <button class="footer-btn">⬇️ 下载APP</button>
-            <button class="footer-btn">✓ 使用攻略</button>
-            <button class="footer-btn login-btn">登录</button>
+    </div>
+</div>
+
+<div class="modal" id="previewModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div id="previewTitle">文件预览</div>
+            <button class="close-btn" onclick="closePreview()">×</button>
+        </div>
+        <div id="previewBody"></div>
+    </div>
+</div>
+
+<div class="main">
+    <div class="top-bar">
+        <div class="page-title">📁 知识库管理</div>
+        <div class="tool-bar">
+            <input type="text" class="search-input" id="searchInput" placeholder="搜索文件/文件夹...">
+            <button class="btn btn-light" onclick="searchItems()">🔍 搜索</button>
+            <button class="btn btn-primary" onclick="createFolder()">📂 新建文件夹</button>
+            <button class="btn btn-success" onclick="document.getElementById('fileUpload').click()">📤 上传文件</button>
+            <input type="file" id="fileUpload" multiple style="display:none;">
         </div>
     </div>
 
-    <div class="main">
-        <div class="top-banner" id="topBanner">正在连接 Ollama...</div>
-        
-        <div class="chat-container" id="chatContainer">
-            <div class="chat-history" id="chatHistory"></div>
-        </div>
-
-        <div class="search-container">
-            <div class="search-box">
-                <textarea class="search-input" id="searchInput" placeholder="想了解什么知识，快来问问我！Shfit+Enter换行"></textarea>
-                <div class="search-tools">
-                    <div class="tools-left">
-                        <div class="search-type-icon" id="searchTypeIcon">🌐 联网搜索</div>
-                        <div class="search-type-menu" id="searchTypeMenu">
-                            <div class="search-type-item" data-type="online">🌐 联网搜索</div>
-                            <div class="search-type-item" data-type="local">📚 知识库搜索</div>
-                        </div>
-                    </div>
-                    <div class="tools-right">
-                        <select class="model-select" id="modelSelect"></select>
-                        <button class="new-chat-btn" id="newChatBtn">🔄 新对话</button>
-                        <button class="send-btn" id="sendBtn">➤ 发送</button>
-                    </div>
-                </div>
+    <div class="content">
+        <div class="path-nav" id="pathNav"></div>
+        <div class="table-wrapper">
+            <div class="list-header">
+                <div class="col-name">名称</div>
+                <div class="col-date">日期</div>
+                <div class="col-type">类型</div>
+                <div class="col-actions">操作</div>
             </div>
+            <div id="listContainer"></div>
         </div>
     </div>
+</div>
 
-    <script>
-        const searchTypeIcon = document.getElementById('searchTypeIcon');
-        const searchTypeMenu = document.getElementById('searchTypeMenu');
-        const searchInput = document.getElementById('searchInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const newChatBtn = document.getElementById('newChatBtn');
-        const chatHistory = document.getElementById('chatHistory');
-        const modelSelect = document.getElementById('modelSelect');
-        const topBanner = document.getElementById('topBanner');
-        const chatContainer = document.getElementById('chatContainer');
+<script>
+const STORAGE_KEY = "xiaoi_kb_data";
+let currentPath = "/";
+let pathStack = [{ name:"根目录", path:"/" }];
 
-        const OLLAMA_HOST = 'http://127.0.0.1:11435';
+let fileSystem = {};
+let meta = {};
+let storedFiles = {};
+let modalMode = '', targetName = '';
+let dragItem = null;
 
-        let currentSearchType = 'online';
-        let conversation = [];
+const dom = {
+    modal: document.getElementById("modal"),
+    modalTitle: document.getElementById("modalTitle"),
+    modalInput: document.getElementById("modalInput"),
+    previewModal: document.getElementById("previewModal"),
+    previewTitle: document.getElementById("previewTitle"),
+    previewBody: document.getElementById("previewBody"),
+    fileUpload: document.getElementById("fileUpload"),
+    listContainer: document.getElementById("listContainer"),
+    pathNav: document.getElementById("pathNav"),
+    searchInput: document.getElementById("searchInput")
+};
 
-        searchTypeIcon.onclick = (e) => { e.stopPropagation(); searchTypeMenu.style.display = searchTypeMenu.style.display=='block'?'none':'block'; }
-        document.querySelectorAll('.search-type-item').forEach(item => {
-            item.onclick = () => { currentSearchType = item.dataset.type; searchTypeIcon.innerHTML = item.innerHTML; searchTypeMenu.style.display='none'; }
+window.onload = () => {
+    loadFromStorage();
+    render();
+    dom.fileUpload.onchange = uploadFiles;
+    initDrag();
+    initColumnResize();
+};
+
+function saveToStorage() {
+    const data = { fileSystem, meta, storedFiles, currentPath, pathStack };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function loadFromStorage() {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (data) {
+        const parsed = JSON.parse(data);
+        fileSystem = parsed.fileSystem || { "/": { folders:[], files:[] } };
+        meta = parsed.meta || {};
+        storedFiles = parsed.storedFiles || {};
+        currentPath = parsed.currentPath || "/";
+        pathStack = parsed.pathStack || [{ name:"根目录", path:"/" }];
+    } else {
+        fileSystem = { "/": { folders:[], files:[] } };
+    }
+}
+
+function render() {
+    dom.listContainer.innerHTML = "";
+    renderPath();
+    const dir = fileSystem[currentPath] || { folders:[], files:[] };
+
+    dir.folders.forEach(name => {
+        const key = currentPath + name;
+        const d = meta[key] || { create:now(), update:now() };
+        const el = row({
+            name, icon:"📁", date:d.update, type:"文件夹",
+            btns: `
+                <button class="btn btn-light" onclick="rename('folder','${name}')">重命名</button>
+                <button class="btn btn-danger" onclick="del('folder','${name}')">删除</button>
+            `
         });
-        document.onclick = () => { searchTypeMenu.style.display = 'none'; };
-
-        async function loadModels() {
-            try {
-                const res = await fetch(`${OLLAMA_HOST}/api/tags`);
-                const data = await res.json();
-                modelSelect.innerHTML = '';
-                data.models.forEach(m => {
-                    const opt = document.createElement('option');
-                    opt.value = m.name;
-                    opt.innerText = m.name;
-                    modelSelect.appendChild(opt);
-                });
-                topBanner.innerText = "✅ 连接成功";
-                topBanner.style.background = "#dcfce7";
-                topBanner.style.color = "#166534";
-            } catch (e) {
-                topBanner.innerText = "❌ 无法连接 Ollama，请确认服务已启动";
-                topBanner.style.background = "#fee2e2";
-                topBanner.style.color = "#991b1b";
+        el.setAttribute("data-type", "folder");
+        el.setAttribute("data-name", name);
+        el.onclick = function(e) {
+            if (!e.target.closest("button")) {
+                enter(name);
             }
-        }
+        };
+        dom.listContainer.appendChild(el);
+    });
 
-        function render() {
-            chatHistory.innerHTML = '';
-            conversation.forEach(msg => {
-                const div = document.createElement('div');
-                div.className = msg.role === 'user' ? 'chat-item user-msg' : 'chat-item bot-msg';
-                div.innerText = msg.content;
-                chatHistory.appendChild(div);
-            });
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
+    dir.files.forEach(file => {
+        const name = file.name;
+        const key = currentPath + name;
+        const d = meta[key] || { create:now(), update:now() };
+        const el = row({
+            name, icon:"📄", date:d.update, type:getType(name),
+            btns: `
+                <button class="btn btn-primary" onclick="view('${name}')">查看</button>
+                <button class="btn btn-light" onclick="download('${name}')">下载</button>
+                <button class="btn btn-light" onclick="rename('file','${name}')">重命名</button>
+                <button class="btn btn-danger" onclick="del('file','${name}')">删除</button>
+            `
+        });
+        el.setAttribute("data-type", "file");
+        el.setAttribute("data-name", name);
+        dom.listContainer.appendChild(el);
+    });
+}
 
-        function newChat() {
-            conversation = [];
-            chatHistory.innerHTML = '';
-            searchInput.value = '';
-            topBanner.innerText = "✅ 已开启新对话";
-        }
+function row({ name, icon, date, type, btns }) {
+    const div = document.createElement("div");
+    div.className = "item-row";
+    div.innerHTML = `
+        <div class="item-name col-name"><span>${icon}</span>${name}</div>
+        <div class="item-date col-date">${date}</div>
+        <div class="item-type col-type">${type}</div>
+        <div class="item-actions col-actions">${btns}</div>
+    `;
+    return div;
+}
 
-        async function send() {
-            const q = searchInput.value.trim();
-            if (!q) return;
-
-            conversation.push({ role: 'user', content: q });
-            conversation.push({ role: 'bot', content: '⏳ 思考中...' });
+function renderPath() {
+    dom.pathNav.innerHTML = "";
+    pathStack.forEach((item, i) => {
+        const a = document.createElement("span");
+        a.className = "path-item";
+        a.innerText = item.name;
+        a.onclick = () => {
+            currentPath = item.path;
+            pathStack = pathStack.slice(0, i+1);
+            saveToStorage();
             render();
-            searchInput.value = '';
+        };
+        dom.pathNav.appendChild(a);
+        if (i < pathStack.length-1) {
+            const s = document.createElement("span");
+            s.innerText = "/";
+            dom.pathNav.appendChild(s);
+        }
+    });
+}
 
-            let prompt = '';
-            for (let i = 0; i < conversation.length - 1; i++) {
-                const c = conversation[i];
-                prompt += (c.role === 'user' ? '用户：' : '助手：') + c.content + '\n';
+function now() {
+    return new Date().toLocaleString();
+}
+
+function getType(name) {
+    const ext = name.split(".").pop().toLowerCase();
+    const map = {
+        img:["png","jpg","jpeg","gif","bmp","webp"],
+        text:["txt","md","json","js","css","html","log"],
+        pdf:["pdf"], word:["doc","docx"],
+        excel:["xls","xlsx","csv"], ppt:["ppt","pptx"],
+        video:["mp4","mov","avi"], audio:["mp3","wav"]
+    };
+    if(map.img.includes(ext))return"图片";
+    if(map.text.includes(ext))return"文本";
+    if(map.pdf.includes(ext))return"PDF";
+    if(map.word.includes(ext))return"Word";
+    if(map.excel.includes(ext))return"Excel";
+    if(map.ppt.includes(ext))return"PPT";
+    if(map.video.includes(ext))return"视频";
+    if(map.audio.includes(ext))return"音频";
+    return"文件";
+}
+
+function initColumnResize() {
+    const cols = document.querySelectorAll(".list-header div");
+    let resizing=false, cur, sx, sw;
+    cols.forEach((c,i)=>{
+        if(i!==cols.length-1){
+            const h=document.createElement("div");
+            h.className="resize-handle"; c.appendChild(h);
+            h.onmousedown=e=>{
+                e.preventDefault(); resizing=true;
+                cur=c; sx=e.pageX; sw=c.offsetWidth;
+                document.body.style.cursor="col-resize";
+            };
+        }
+    });
+    document.onmousemove=e=>{
+        if(!resizing)return;
+        const w=sw+e.pageX-sx;
+        if(w>60){cur.style.width=w+"px"; cur.style.flex="none";}
+    };
+    document.onmouseup=()=>{
+        resizing=false; document.body.style.cursor="";
+    };
+}
+
+function initDrag(){
+    document.addEventListener("dragstart",e=>{
+        const r=e.target.closest(".item-row");
+        if(!r)return;
+        dragItem={type:r.getAttribute("data-type"), name:r.getAttribute("data-name")};
+    });
+    document.addEventListener("dragover",e=>e.preventDefault());
+    document.addEventListener("drop",e=>{
+        e.preventDefault();
+        const t=e.target.closest(".item-row");
+        if(!t||!dragItem||t.getAttribute("data-type")!=="folder")return;
+        const dstName=t.getAttribute("data-name");
+        const dstPath=currentPath==="/"?`/${dstName}`:`${currentPath}/${dstName}`;
+        const src=fileSystem[currentPath];
+        const dst=fileSystem[dstPath]||(fileSystem[dstPath]={folders:[],files:[]});
+        if(dragItem.type==="folder"){
+            if(src.folders.includes(dragItem.name)){
+                src.folders=src.folders.filter(n=>n!==dragItem.name);
+                if(!dst.folders.includes(dragItem.name))dst.folders.push(dragItem.name);
             }
-            prompt += '用户：' + q + '\n助手：';
-
-            try {
-                const res = await fetch(`${OLLAMA_HOST}/api/generate`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ model: modelSelect.value, prompt: prompt, stream: false })
-                });
-                const data = await res.json();
-                conversation.pop();
-                conversation.push({ role: 'bot', content: data.response });
-                render();
-            } catch (e) {
-                conversation.pop();
-                conversation.push({ role: 'bot', content: '❌ 连接 Ollama 失败' });
-                render();
+        }else{
+            const f=src.files.find(x=>x.name===dragItem.name);
+            if(f&&!dst.files.some(x=>x.name===dragItem.name)){
+                src.files=src.files.filter(x=>x.name!==dragItem.name);
+                dst.files.push(f);
             }
         }
+        saveToStorage();
+        render();
+        dragItem=null;
+    });
+}
 
-        sendBtn.onclick = send;
-        newChatBtn.onclick = newChat;
-        searchInput.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }
-        window.onload = loadModels;
-    </script>
+function view(name){
+    const f=storedFiles[name];
+    if(!f){dom.previewBody.innerHTML="<div class='preview-none'>文件不存在</div>";dom.previewModal.style.display="flex";return;}
+    dom.previewTitle.innerText=name;
+    if(f.type.startsWith("image/")){
+        dom.previewBody.innerHTML=`<img src="${f.base64}" class="preview-img">`;
+    }else if(f.type.startsWith("text/")||/\.(txt|md|json|js|css|html)$/.test(name)){
+        dom.previewBody.innerHTML=`<div class="preview-text">${atob(f.base64.split(",")[1]||"")}</div>`;
+    }else{
+        dom.previewBody.innerHTML="<div class='preview-none'>暂不支持预览</div>";
+    }
+    dom.previewModal.style.display="flex";
+}
+function closePreview(){dom.previewModal.style.display="none";dom.previewBody.innerHTML="";}
+
+function download(name){
+    const f=storedFiles[name];
+    if(!f)return alert("文件不存在");
+    const a=document.createElement("a");
+    a.href=f.base64;
+    a.download=name;
+    a.click();
+}
+
+function createFolder(){
+    modalMode = 'createFolder';
+    dom.modalTitle.innerText = "新建文件夹";
+    dom.modalInput.value = "";
+    dom.modal.style.display = "flex";
+}
+function rename(type,name){
+    modalMode = type === 'folder' ? 'renameFolder' : 'renameFile';
+    targetName = name;
+    dom.modalTitle.innerText = "重命名";
+    dom.modalInput.value = name;
+    dom.modal.style.display = "flex";
+}
+function closeModal(){dom.modal.style.display="none";}
+
+function confirmModal(){
+    const val = dom.modalInput.value.trim();
+    if(!val) return closeModal();
+    const dir = fileSystem[currentPath];
+    const t = now();
+
+    if(modalMode === "createFolder"){
+        if(!dir.folders.includes(val)){
+            dir.folders.push(val);
+            meta[currentPath + val] = { create:t, update:t };
+        }
+    }else if(modalMode === "renameFolder"){
+        if(dir.folders.includes(targetName) && !dir.folders.includes(val)){
+            dir.folders = dir.folders.map(n => n === targetName ? val : n);
+            meta[currentPath + val] = meta[currentPath + targetName] || { create:t, update:t };
+            delete meta[currentPath + targetName];
+        }
+    }else if(modalMode === "renameFile"){
+        dir.files = dir.files.map(f => f.name === targetName ? { name:val } : f);
+        if(storedFiles[targetName]){
+            storedFiles[val] = storedFiles[targetName];
+            delete storedFiles[targetName];
+        }
+        meta[currentPath + val] = meta[currentPath + targetName] || { create:t, update:t };
+        delete meta[currentPath + targetName];
+    }
+    saveToStorage();
+    render();
+    closeModal();
+}
+
+function del(type,name){
+    if(!confirm(`确定删除【${name}】？`)) return;
+    const dir = fileSystem[currentPath];
+    if(type === "folder"){
+        dir.folders = dir.folders.filter(n => n !== name);
+        deleteDeep(currentPath + name);
+    }else{
+        dir.files = dir.files.filter(f => f.name !== name);
+        delete storedFiles[name];
+        delete meta[currentPath + name];
+    }
+    saveToStorage();
+    render();
+}
+
+function deleteDeep(path){
+    const d = fileSystem[path];
+    if(!d) return;
+    d.files.forEach(f => { delete storedFiles[f.name]; delete meta[path + f.name]; });
+    d.folders.forEach(sub => deleteDeep(path + "/" + sub));
+    delete fileSystem[path];
+}
+
+function enter(name){
+    const np = currentPath === "/" ? `/${name}` : `${currentPath}/${name}`;
+    if(!fileSystem[np]) fileSystem[np] = { folders:[], files:[] };
+    currentPath = np;
+    pathStack.push({ name, path:np });
+    saveToStorage();
+    render();
+}
+
+// 修复上传文件核心逻辑
+function uploadFiles() {
+    const files = dom.fileUpload.files;
+    if (!files.length) return;
+    const dir = fileSystem[currentPath];
+    const t = now();
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        // 跳过同名文件
+        if (dir.files.some(x => x.name === file.name)) continue;
+
+        // 先添加文件记录
+        dir.files.push({ name: file.name });
+        const reader = new FileReader();
+
+        // 绑定读取完成事件
+        reader.onload = (e) => {
+            storedFiles[file.name] = {
+                base64: e.target.result,
+                type: file.type,
+                name: file.name
+            };
+            meta[currentPath + file.name] = { create: t, update: t };
+            saveToStorage();
+            render(); // 读取完成后刷新列表
+        };
+
+        // 读取文件为Base64
+        reader.readAsDataURL(file);
+    }
+    // 清空文件选择框，允许重复上传
+    dom.fileUpload.value = "";
+}
+
+function searchItems(){
+    const k = dom.searchInput.value.toLowerCase().trim();
+    document.querySelectorAll(".item-row").forEach(el => {
+        el.style.display = el.innerText.toLowerCase().includes(k) ? "flex" : "none";
+    });
+}
+</script>
 </body>
 </html>
